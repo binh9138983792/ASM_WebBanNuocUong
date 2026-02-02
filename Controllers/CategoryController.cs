@@ -22,7 +22,7 @@ namespace ASM_WebBanNuocUong.Controllers
         // GET: Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _context.DanhMucs.ToListAsync());
         }
 
         // GET: Category/Details/5
@@ -33,14 +33,14 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            var danhMuc = await _context.DanhMucs
+                .FirstOrDefaultAsync(m => m.MaDanhMuc == id);
+            if (danhMuc == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(danhMuc);
         }
 
         // GET: Category/Create
@@ -54,16 +54,16 @@ namespace ASM_WebBanNuocUong.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
+        public async Task<IActionResult> Create([Bind("MaDanhMuc,TenDanhMuc")] DanhMuc danhMuc)
         {
             if (ModelState.IsValid)
             {
-                category.Id = Guid.NewGuid();
-                _context.Add(category);
+                danhMuc.MaDanhMuc = Guid.NewGuid();
+                _context.Add(danhMuc);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(danhMuc);
         }
 
         // GET: Category/Edit/5
@@ -74,12 +74,12 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var danhMuc = await _context.DanhMucs.FindAsync(id);
+            if (danhMuc == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(danhMuc);
         }
 
         // POST: Category/Edit/5
@@ -87,9 +87,9 @@ namespace ASM_WebBanNuocUong.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] Category category)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MaDanhMuc,TenDanhMuc")] DanhMuc danhMuc)
         {
-            if (id != category.Id)
+            if (id != danhMuc.MaDanhMuc)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace ASM_WebBanNuocUong.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(danhMuc);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!DanhMucExists(danhMuc.MaDanhMuc))
                     {
                         return NotFound();
                     }
@@ -114,7 +114,7 @@ namespace ASM_WebBanNuocUong.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(danhMuc);
         }
 
         // GET: Category/Delete/5
@@ -125,14 +125,14 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
+            var danhMuc = await _context.DanhMucs
+                .FirstOrDefaultAsync(m => m.MaDanhMuc == id);
+            if (danhMuc == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(danhMuc);
         }
 
         // POST: Category/Delete/5
@@ -140,19 +140,19 @@ namespace ASM_WebBanNuocUong.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
+            var danhMuc = await _context.DanhMucs.FindAsync(id);
+            if (danhMuc != null)
             {
-                _context.Categories.Remove(category);
+                _context.DanhMucs.Remove(danhMuc);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(Guid id)
+        private bool DanhMucExists(Guid id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.DanhMucs.Any(e => e.MaDanhMuc == id);
         }
     }
 }

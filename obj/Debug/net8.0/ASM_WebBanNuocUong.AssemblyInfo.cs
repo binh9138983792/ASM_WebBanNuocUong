@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ASM_WebBanNuocUong")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a83519dbbd41d424c89972d62dc955f213a12d1d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8a3b3fce7bb63180824a6c1246bf48af205c8ed9")]
 [assembly: System.Reflection.AssemblyProductAttribute("ASM_WebBanNuocUong")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ASM_WebBanNuocUong")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

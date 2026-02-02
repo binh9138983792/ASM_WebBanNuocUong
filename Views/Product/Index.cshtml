@@ -1,4 +1,4 @@
-@model IEnumerable<ASM_WebBanNuocUong.Models.Product>
+@model IEnumerable<ASM_WebBanNuocUong.Models.SanPham>
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -19,15 +19,15 @@
         <tbody>
             @foreach (var item in Model) {
                 <tr>
-                    <td><img src="@item.Image" style="width:60px; height:60px; object-fit:cover;" class="rounded shadow-sm"/></td>
-                    <td class="fw-bold">@item.Name</td>
-                    <td class="text-danger fw-bold">@item.Price.ToString("N0") VNĐ</td>
-                    <td><span class="badge bg-info text-dark">@item.Theme</span></td>
+                    <td><img src="@item.HinhAnh" style="width:60px; height:60px; object-fit:cover;" class="rounded shadow-sm"/></td>
+                    <td class="fw-bold">@item.TenSanPham</td>
+                    <td class="text-danger fw-bold">@item.Gia.ToString("N0") VNĐ</td>
+                    <td><span class="badge bg-info text-dark">@item.ChuDe</span></td>
                     <td>
                         <div class="btn-group">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Xem</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                            <a asp-action="Edit" asp-route-id="@item.MaSanPham" class="btn btn-sm btn-warning">Sửa</a>
+                            <a asp-action="Details" asp-route-id="@item.MaSanPham" class="btn btn-sm btn-info">Xem</a>
+                            <a asp-action="Delete" asp-route-id="@item.MaSanPham" class="btn btn-sm btn-danger">Xóa</a>
                         </div>
                     </td>
                 </tr>

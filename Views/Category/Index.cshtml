@@ -1,4 +1,4 @@
-@model IEnumerable<ASM_WebBanNuocUong.Models.Category>
+@model IEnumerable<ASM_WebBanNuocUong.Models.DanhMuc>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+@Html.DisplayNameFor(model => model.TenDanhMuc)
             </th>
             <th></th>
         </tr>
@@ -22,12 +22,12 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+@Html.DisplayFor(modelItem => item.TenDanhMuc)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+<a asp-action="Edit" asp-route-id="@item.MaDanhMuc">Edit</a> |
+<a asp-action="Details" asp-route-id="@item.MaDanhMuc">Details</a> |
+<a asp-action="Delete" asp-route-id="@item.MaDanhMuc">Delete</a>
             </td>
         </tr>
 }

@@ -34,7 +34,7 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var combo = await _context.Combos
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.MaCombo == id);
             if (combo == null)
             {
                 return NotFound();
@@ -54,11 +54,11 @@ namespace ASM_WebBanNuocUong.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description")] Combo combo)
+        public async Task<IActionResult> Create([Bind("MaCombo,TenCombo,Gia,MoTa")] Combo combo)
         {
             if (ModelState.IsValid)
             {
-                combo.Id = Guid.NewGuid();
+                combo.MaCombo = Guid.NewGuid();
                 _context.Add(combo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -87,9 +87,9 @@ namespace ASM_WebBanNuocUong.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Price,Description")] Combo combo)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MaCombo,TenCombo,Gia,MoTa")] Combo combo)
         {
-            if (id != combo.Id)
+            if (id != combo.MaCombo)
             {
                 return NotFound();
             }
@@ -103,7 +103,7 @@ namespace ASM_WebBanNuocUong.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ComboExists(combo.Id))
+                    if (!ComboExists(combo.MaCombo))
                     {
                         return NotFound();
                     }
@@ -126,7 +126,7 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var combo = await _context.Combos
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.MaCombo == id);
             if (combo == null)
             {
                 return NotFound();
@@ -152,7 +152,7 @@ namespace ASM_WebBanNuocUong.Controllers
 
         private bool ComboExists(Guid id)
         {
-            return _context.Combos.Any(e => e.Id == id);
+            return _context.Combos.Any(e => e.MaCombo == id);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ASM_WebBanNuocUong.Models.Product>
+﻿@model IEnumerable<ASM_WebBanNuocUong.Models.SanPham>
 
 @{
     ViewData["Title"] = "Trang Chủ - Drink Store";
@@ -33,14 +33,14 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0 transition-hover">
                         <div class="position-relative">
-                            <img src="@item.Image" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger">@item.Theme</span>
+                            <img src="@item.HinhAnh" class="card-img-top" alt="@item.TenSanPham" style="height: 200px; object-fit: cover;">
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger">@item.ChuDe</span>
                         </div>
                         
                       <div class="card h-100 shadow-sm">
-    <img src="@item.Image" class="card-img-top" style="height: 200px; object-fit: cover;">
-    <div class="card-body text-center" style="background-color: #FFF9F4;"> <h5 class="card-title fw-bold" style="color: var(--brown-dark);">@item.Name</h5>
-        <p class="text-danger fw-bold">@item.Price.ToString("N0") VNĐ</p>
+    <img src="@item.HinhAnh" class="card-img-top" style="height: 200px; object-fit: cover;">
+    <div class="card-body text-center" style="background-color: #FFF9F4;"> <h5 class="card-title fw-bold" style="color: var(--brown-dark);">@item.TenSanPham</h5>
+        <p class="text-danger fw-bold">@item.Gia.ToString("N0") VNĐ</p>
         <div class="d-grid gap-2">
             <a href="#" class="btn btn-primary">Thêm vào giỏ</a>
             <a href="#" class="btn btn-outline-secondary">Chi tiết</a>

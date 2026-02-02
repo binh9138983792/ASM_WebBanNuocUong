@@ -22,7 +22,7 @@ namespace ASM_WebBanNuocUong.Controllers
         // GET: Product
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Products.Include(p => p.Category);
+            var appDbContext = _context.SanPhams.Include(p => p.DanhMuc);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -34,21 +34,21 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var sanPham = await _context.SanPhams
+                .Include(p => p.DanhMuc)
+                .FirstOrDefaultAsync(m => m.MaSanPham == id);
+            if (sanPham == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(sanPham);
         }
 
         // GET: Product/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc");
             return View();
         }
 
@@ -57,17 +57,17 @@ namespace ASM_WebBanNuocUong.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Image,Description,Theme,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("MaSanPham,TenSanPham,Gia,HinhAnh,MoTa,ChuDe,MaDanhMuc")] SanPham sanPham)
         {
             if (ModelState.IsValid)
             {
-                product.Id = Guid.NewGuid();
-                _context.Add(product);
+                sanPham.MaSanPham = Guid.NewGuid();
+                _context.Add(sanPham);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            return View(product);
+            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
+            return View(sanPham);
         }
 
         // GET: Product/Edit/5
@@ -78,13 +78,13 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var sanPham = await _context.SanPhams.FindAsync(id);
+            if (sanPham == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            return View(product);
+            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
+            return View(sanPham);
         }
 
         // POST: Product/Edit/5
@@ -92,9 +92,9 @@ namespace ASM_WebBanNuocUong.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Price,Image,Description,Theme,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MaSanPham,TenSanPham,Gia,HinhAnh,MoTa,ChuDe,MaDanhMuc")] SanPham sanPham)
         {
-            if (id != product.Id)
+            if (id != sanPham.MaSanPham)
             {
                 return NotFound();
             }
@@ -103,12 +103,12 @@ namespace ASM_WebBanNuocUong.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(sanPham);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!SanPhamExists(sanPham.MaSanPham))
                     {
                         return NotFound();
                     }
@@ -119,8 +119,8 @@ namespace ASM_WebBanNuocUong.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            return View(product);
+            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
+            return View(sanPham);
         }
 
         // GET: Product/Delete/5
@@ -131,15 +131,15 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var sanPham = await _context.SanPhams
+                .Include(p => p.DanhMuc)
+                .FirstOrDefaultAsync(m => m.MaSanPham == id);
+            if (sanPham == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(sanPham);
         }
 
         // POST: Product/Delete/5
@@ -147,19 +147,19 @@ namespace ASM_WebBanNuocUong.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
+            var sanPham = await _context.SanPhams.FindAsync(id);
+            if (sanPham != null)
             {
-                _context.Products.Remove(product);
+                _context.SanPhams.Remove(sanPham);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(Guid id)
+        private bool SanPhamExists(Guid id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _context.SanPhams.Any(e => e.MaSanPham == id);
         }
     }
 }
