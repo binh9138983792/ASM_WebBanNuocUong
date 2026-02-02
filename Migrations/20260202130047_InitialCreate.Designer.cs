@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASM_WebBanNuocUong.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260202121221_Database")]
-    partial class Database
+    [Migration("20260202130047_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,29 @@ namespace ASM_WebBanNuocUong.Migrations
                     b.HasIndex("MaSanPham");
 
                     b.ToTable("ComboDetails", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            MaChiTietCombo = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            MaCombo = new Guid("88888888-8888-8888-8888-888888888888"),
+                            MaSanPham = new Guid("44444444-4444-4444-4444-444444444444"),
+                            SoLuong = 1
+                        },
+                        new
+                        {
+                            MaChiTietCombo = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            MaCombo = new Guid("88888888-8888-8888-8888-888888888888"),
+                            MaSanPham = new Guid("66666666-6666-6666-6666-666666666666"),
+                            SoLuong = 1
+                        },
+                        new
+                        {
+                            MaChiTietCombo = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            MaCombo = new Guid("99999999-9999-9999-9999-999999999999"),
+                            MaSanPham = new Guid("55555555-5555-5555-5555-555555555555"),
+                            SoLuong = 2
+                        });
                 });
 
             modelBuilder.Entity("ASM_WebBanNuocUong.Models.ChiTietDonHang", b =>
@@ -133,6 +156,28 @@ namespace ASM_WebBanNuocUong.Migrations
                         .IsUnique();
 
                     b.ToTable("Combos", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            MaCombo = new Guid("88888888-8888-8888-8888-888888888888"),
+                            Gia = 60000m,
+                            HinhAnh = "combo_sang.jpg",
+                            MoTa = "Combo hoàn hảo cho buổi sáng",
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TenCombo = "Combo Sáng Đầy Năng Lượng",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            MaCombo = new Guid("99999999-9999-9999-9999-999999999999"),
+                            Gia = 80000m,
+                            HinhAnh = "combo_chieu.jpg",
+                            MoTa = "Combo thư giãn buổi chiều",
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TenCombo = "Combo Chiều Thư Giãn",
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("ASM_WebBanNuocUong.Models.DanhMuc", b =>
@@ -165,6 +210,29 @@ namespace ASM_WebBanNuocUong.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            MaDanhMuc = new Guid("11111111-1111-1111-1111-111111111111"),
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TenDanhMuc = "Cà phê",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            MaDanhMuc = new Guid("22222222-2222-2222-2222-222222222222"),
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TenDanhMuc = "Trà sữa",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            MaDanhMuc = new Guid("33333333-3333-3333-3333-333333333333"),
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TenDanhMuc = "Nước ép",
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("ASM_WebBanNuocUong.Models.DonHang", b =>
@@ -258,6 +326,34 @@ namespace ASM_WebBanNuocUong.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            MaNguoiDung = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                            DiaChi = "123 Đường ABC, Quận 1, TP.HCM",
+                            Email = "admin@nuocuong.com",
+                            HoTen = "Admin Quản Trị",
+                            MatKhau = "admin123",
+                            NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SoDienThoai = "0123456789",
+                            TrangThai = true,
+                            VaiTro = "Admin"
+                        },
+                        new
+                        {
+                            MaNguoiDung = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                            DiaChi = "456 Đường XYZ, Quận 2, TP.HCM",
+                            Email = "customer@example.com",
+                            HoTen = "Khách Hàng Mẫu",
+                            MatKhau = "customer123",
+                            NgaySinh = new DateTime(1995, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SoDienThoai = "0987654321",
+                            TrangThai = true,
+                            VaiTro = "Customer"
+                        });
                 });
 
             modelBuilder.Entity("ASM_WebBanNuocUong.Models.SanPham", b =>
@@ -313,6 +409,60 @@ namespace ASM_WebBanNuocUong.Migrations
                         .IsUnique();
 
                     b.ToTable("Products", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            MaSanPham = new Guid("44444444-4444-4444-4444-444444444444"),
+                            ChuDe = "Cà phê",
+                            Gia = 25000m,
+                            HinhAnh = "caphe_den.jpg",
+                            MaDanhMuc = new Guid("11111111-1111-1111-1111-111111111111"),
+                            MoTa = "Cà phê đen nguyên chất",
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SoLuongTon = 100,
+                            TenSanPham = "Cà phê đen",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            MaSanPham = new Guid("55555555-5555-5555-5555-555555555555"),
+                            ChuDe = "Cà phê",
+                            Gia = 30000m,
+                            HinhAnh = "caphe_sua.jpg",
+                            MaDanhMuc = new Guid("11111111-1111-1111-1111-111111111111"),
+                            MoTa = "Cà phê sữa thơm ngon",
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SoLuongTon = 80,
+                            TenSanPham = "Cà phê sữa",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            MaSanPham = new Guid("66666666-6666-6666-6666-666666666666"),
+                            ChuDe = "Trà sữa",
+                            Gia = 35000m,
+                            HinhAnh = "tra_sua_tran_chau.jpg",
+                            MaDanhMuc = new Guid("22222222-2222-2222-2222-222222222222"),
+                            MoTa = "Trà sữa thượng hạng",
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SoLuongTon = 120,
+                            TenSanPham = "Trà sữa trân châu",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            MaSanPham = new Guid("77777777-7777-7777-7777-777777777777"),
+                            ChuDe = "Nước ép",
+                            Gia = 40000m,
+                            HinhAnh = "nuoc_ep_cam.jpg",
+                            MaDanhMuc = new Guid("33333333-3333-3333-3333-333333333333"),
+                            MoTa = "Nước ép cam tươi nguyên chất",
+                            NgayTao = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SoLuongTon = 60,
+                            TenSanPham = "Nước ép cam",
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("ASM_WebBanNuocUong.Models.ChiTietCombo", b =>

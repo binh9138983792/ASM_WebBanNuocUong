@@ -203,7 +203,6 @@ public class AppDbContext : DbContext {
             .IsUnique();
         
         // ========== CẤU HÌNH TÊN BẢNG ==========
-        // (Giữ nguyên cấu hình tên bảng của bạn)
         modelBuilder.Entity<NguoiDung>().ToTable("Users");
         modelBuilder.Entity<SanPham>().ToTable("Products");
         modelBuilder.Entity<DanhMuc>().ToTable("Categories");
@@ -211,5 +210,200 @@ public class AppDbContext : DbContext {
         modelBuilder.Entity<ChiTietDonHang>().ToTable("OrderDetails");
         modelBuilder.Entity<Combo>().ToTable("Combos");
         modelBuilder.Entity<ChiTietCombo>().ToTable("ComboDetails");
+        
+        // ========== SEED DATA ==========
+        SeedData(modelBuilder);
+    }
+
+    private void SeedData(ModelBuilder modelBuilder)
+    {
+        // Tạo các GUID cố định để seed data
+        var danhMuc1Id = new Guid("11111111-1111-1111-1111-111111111111");
+        var danhMuc2Id = new Guid("22222222-2222-2222-2222-222222222222");
+        var danhMuc3Id = new Guid("33333333-3333-3333-3333-333333333333");
+        
+        var sanPham1Id = new Guid("44444444-4444-4444-4444-444444444444");
+        var sanPham2Id = new Guid("55555555-5555-5555-5555-555555555555");
+        var sanPham3Id = new Guid("66666666-6666-6666-6666-666666666666");
+        var sanPham4Id = new Guid("77777777-7777-7777-7777-777777777777");
+        
+        var combo1Id = new Guid("88888888-8888-8888-8888-888888888888");
+        var combo2Id = new Guid("99999999-9999-9999-9999-999999999999");
+        
+        var chiTietCombo1Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        var chiTietCombo2Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+        var chiTietCombo3Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc");
+        
+        var adminId = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd");
+        var customerId = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee");
+        
+        // Seed DanhMuc
+        modelBuilder.Entity<DanhMuc>().HasData(
+            new DanhMuc 
+            { 
+                MaDanhMuc = danhMuc1Id, 
+                TenDanhMuc = "Cà phê", 
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            },
+            new DanhMuc 
+            { 
+                MaDanhMuc = danhMuc2Id, 
+                TenDanhMuc = "Trà sữa", 
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            },
+            new DanhMuc 
+            { 
+                MaDanhMuc = danhMuc3Id, 
+                TenDanhMuc = "Nước ép", 
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            }
+        );
+        
+        // Seed SanPham
+        modelBuilder.Entity<SanPham>().HasData(
+            new SanPham
+            {
+                MaSanPham = sanPham1Id,
+                TenSanPham = "Cà phê đen",
+                Gia = 25000,
+                HinhAnh = "caphe_den.jpg",
+                MoTa = "Cà phê đen nguyên chất",
+                ChuDe = "Cà phê",
+                TrangThai = true,
+                SoLuongTon = 100,
+                MaDanhMuc = danhMuc1Id,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            },
+            new SanPham
+            {
+                MaSanPham = sanPham2Id,
+                TenSanPham = "Cà phê sữa",
+                Gia = 30000,
+                HinhAnh = "caphe_sua.jpg",
+                MoTa = "Cà phê sữa thơm ngon",
+                ChuDe = "Cà phê",
+                TrangThai = true,
+                SoLuongTon = 80,
+                MaDanhMuc = danhMuc1Id,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            },
+            new SanPham
+            {
+                MaSanPham = sanPham3Id,
+                TenSanPham = "Trà sữa trân châu",
+                Gia = 35000,
+                HinhAnh = "tra_sua_tran_chau.jpg",
+                MoTa = "Trà sữa thượng hạng",
+                ChuDe = "Trà sữa",
+                TrangThai = true,
+                SoLuongTon = 120,
+                MaDanhMuc = danhMuc2Id,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            },
+            new SanPham
+            {
+                MaSanPham = sanPham4Id,
+                TenSanPham = "Nước ép cam",
+                Gia = 40000,
+                HinhAnh = "nuoc_ep_cam.jpg",
+                MoTa = "Nước ép cam tươi nguyên chất",
+                ChuDe = "Nước ép",
+                TrangThai = true,
+                SoLuongTon = 60,
+                MaDanhMuc = danhMuc3Id,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            }
+        );
+        
+        // Seed Combo
+        modelBuilder.Entity<Combo>().HasData(
+            new Combo
+            {
+                MaCombo = combo1Id,
+                TenCombo = "Combo Sáng Đầy Năng Lượng",
+                Gia = 60000,
+                MoTa = "Combo hoàn hảo cho buổi sáng",
+                HinhAnh = "combo_sang.jpg",
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            },
+            new Combo
+            {
+                MaCombo = combo2Id,
+                TenCombo = "Combo Chiều Thư Giãn",
+                Gia = 80000,
+                MoTa = "Combo thư giãn buổi chiều",
+                HinhAnh = "combo_chieu.jpg",
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1),
+                NgayCapNhat = null
+            }
+        );
+        
+        // Seed ChiTietCombo
+        modelBuilder.Entity<ChiTietCombo>().HasData(
+            new ChiTietCombo
+            {
+                MaChiTietCombo = chiTietCombo1Id,
+                MaCombo = combo1Id,
+                MaSanPham = sanPham1Id,
+                SoLuong = 1
+            },
+            new ChiTietCombo
+            {
+                MaChiTietCombo = chiTietCombo2Id,
+                MaCombo = combo1Id,
+                MaSanPham = sanPham3Id,
+                SoLuong = 1
+            },
+            new ChiTietCombo
+            {
+                MaChiTietCombo = chiTietCombo3Id,
+                MaCombo = combo2Id,
+                MaSanPham = sanPham2Id,
+                SoLuong = 2
+            }
+        );
+        
+        // Seed NguoiDung
+        modelBuilder.Entity<NguoiDung>().HasData(
+            new NguoiDung
+            {
+                MaNguoiDung = adminId,
+                HoTen = "Admin Quản Trị",
+                Email = "admin@nuocuong.com",
+                MatKhau = "admin123", // Lưu ý: Trong thực tế nên mã hóa
+                SoDienThoai = "0123456789",
+                DiaChi = "123 Đường ABC, Quận 1, TP.HCM",
+                NgaySinh = new DateTime(1990, 1, 1),
+                VaiTro = "Admin",
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1)
+            },
+            new NguoiDung
+            {
+                MaNguoiDung = customerId,
+                HoTen = "Khách Hàng Mẫu",
+                Email = "customer@example.com",
+                MatKhau = "customer123", // Lưu ý: Trong thực tế nên mã hóa
+                SoDienThoai = "0987654321",
+                DiaChi = "456 Đường XYZ, Quận 2, TP.HCM",
+                NgaySinh = new DateTime(1995, 5, 15),
+                VaiTro = "Customer",
+                TrangThai = true,
+                NgayTao = new DateTime(2024, 1, 1)
+            }
+        );
     }
 }

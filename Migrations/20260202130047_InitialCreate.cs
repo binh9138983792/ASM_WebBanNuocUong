@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ASM_WebBanNuocUong.Migrations
 {
     /// <inheritdoc />
-    public partial class Database : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -175,6 +177,55 @@ namespace ASM_WebBanNuocUong.Migrations
                         principalTable: "Products",
                         principalColumn: "MaSanPham",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "MaDanhMuc", "NgayCapNhat", "NgayTao", "TenDanhMuc", "TrangThai" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Cà phê", true },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trà sữa", true },
+                    { new Guid("33333333-3333-3333-3333-333333333333"), null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Nước ép", true }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Combos",
+                columns: new[] { "MaCombo", "Gia", "HinhAnh", "MoTa", "NgayCapNhat", "NgayTao", "TenCombo", "TrangThai" },
+                values: new object[,]
+                {
+                    { new Guid("88888888-8888-8888-8888-888888888888"), 60000m, "combo_sang.jpg", "Combo hoàn hảo cho buổi sáng", null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Combo Sáng Đầy Năng Lượng", true },
+                    { new Guid("99999999-9999-9999-9999-999999999999"), 80000m, "combo_chieu.jpg", "Combo thư giãn buổi chiều", null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Combo Chiều Thư Giãn", true }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "MaNguoiDung", "DiaChi", "Email", "HoTen", "MatKhau", "NgaySinh", "NgayTao", "SoDienThoai", "TrangThai", "VaiTro" },
+                values: new object[,]
+                {
+                    { new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), "123 Đường ABC, Quận 1, TP.HCM", "admin@nuocuong.com", "Admin Quản Trị", "admin123", new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "0123456789", true, "Admin" },
+                    { new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), "456 Đường XYZ, Quận 2, TP.HCM", "customer@example.com", "Khách Hàng Mẫu", "customer123", new DateTime(1995, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "0987654321", true, "Customer" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "MaSanPham", "ChuDe", "Gia", "HinhAnh", "MaDanhMuc", "MoTa", "NgayCapNhat", "NgayTao", "SoLuongTon", "TenSanPham", "TrangThai" },
+                values: new object[,]
+                {
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "Cà phê", 25000m, "caphe_den.jpg", new Guid("11111111-1111-1111-1111-111111111111"), "Cà phê đen nguyên chất", null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 100, "Cà phê đen", true },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), "Cà phê", 30000m, "caphe_sua.jpg", new Guid("11111111-1111-1111-1111-111111111111"), "Cà phê sữa thơm ngon", null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 80, "Cà phê sữa", true },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), "Trà sữa", 35000m, "tra_sua_tran_chau.jpg", new Guid("22222222-2222-2222-2222-222222222222"), "Trà sữa thượng hạng", null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 120, "Trà sữa trân châu", true },
+                    { new Guid("77777777-7777-7777-7777-777777777777"), "Nước ép", 40000m, "nuoc_ep_cam.jpg", new Guid("33333333-3333-3333-3333-333333333333"), "Nước ép cam tươi nguyên chất", null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 60, "Nước ép cam", true }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ComboDetails",
+                columns: new[] { "MaChiTietCombo", "MaCombo", "MaSanPham", "SoLuong" },
+                values: new object[,]
+                {
+                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new Guid("88888888-8888-8888-8888-888888888888"), new Guid("44444444-4444-4444-4444-444444444444"), 1 },
+                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new Guid("88888888-8888-8888-8888-888888888888"), new Guid("66666666-6666-6666-6666-666666666666"), 1 },
+                    { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), new Guid("99999999-9999-9999-9999-999999999999"), new Guid("55555555-5555-5555-5555-555555555555"), 2 }
                 });
 
             migrationBuilder.CreateIndex(
