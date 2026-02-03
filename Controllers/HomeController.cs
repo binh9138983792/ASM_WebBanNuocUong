@@ -1,21 +1,53 @@
 using Microsoft.AspNetCore.Mvc;
-using ASM_WebBanNuocUong.Data; 
-using Microsoft.EntityFrameworkCore;
+using ASM_WebBanNuocUong.Data;
 using ASM_WebBanNuocUong.Models;
+using Microsoft.EntityFrameworkCore;
 
-public class HomeController : Controller
+namespace ASM_WebBanNuocUong.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public HomeController(AppDbContext context)
+    public class HomeController : Controller
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public async Task<IActionResult> Index()
-    {
-        // Lấy danh sách sản phẩm từ DB truyền ra View
-        var products = await _context.SanPhams.ToListAsync();
-        return View(products);
+        public HomeController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            ViewBag.SanPhamMoi = await _context.SanPhams
+                .Where(sp => sp.TrangThai)
+                .OrderByDescending(sp => sp.NgayTao)
+                .Take(8)
+                .ToListAsync();
+
+            ViewBag.ComboNoiBat = await _context.Combos
+                .Where(c => c.TrangThai)
+                .Take(4)
+                .ToListAsync();
+
+            ViewBag.DanhMuc = await _context.DanhMucs
+                .Where(dm => dm.TrangThai)
+                .Include(dm => dm.DanhSachSanPham)
+                .ToListAsync();
+
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> About()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Contact()
+        {
+            return View();
+        }
     }
 }

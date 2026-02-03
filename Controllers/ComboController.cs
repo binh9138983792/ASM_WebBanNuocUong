@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ASM_WebBanNuocUong.Data;
 using ASM_WebBanNuocUong.Models;
@@ -22,7 +17,13 @@ namespace ASM_WebBanNuocUong.Controllers
         // GET: Combo
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Combos.ToListAsync());
+            var combos = await _context.Combos
+                .Include(c => c.DanhSachChiTietCombo)
+                    .ThenInclude(ct => ct.SanPham)
+                .Where(c => c.TrangThai)
+                .ToListAsync();
+            
+            return View(combos);
         }
 
         // GET: Combo/Details/5
@@ -34,7 +35,10 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var combo = await _context.Combos
+                .Include(c => c.DanhSachChiTietCombo)
+                    .ThenInclude(ct => ct.SanPham)
                 .FirstOrDefaultAsync(m => m.MaCombo == id);
+            
             if (combo == null)
             {
                 return NotFound();
@@ -44,25 +48,50 @@ namespace ASM_WebBanNuocUong.Controllers
         }
 
         // GET: Combo/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.SanPhamList = await _context.SanPhams
+                .Where(sp => sp.TrangThai)
+                .ToListAsync();
+            
             return View();
         }
 
         // POST: Combo/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaCombo,TenCombo,Gia,MoTa")] Combo combo)
+        public async Task<IActionResult> Create(Combo combo, List<Guid> selectedProducts, List<int> quantities)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && selectedProducts != null && selectedProducts.Count > 0)
             {
                 combo.MaCombo = Guid.NewGuid();
+                combo.NgayTao = DateTime.Now;
+                combo.TrangThai = true;
+                
                 _context.Add(combo);
+                await _context.SaveChangesAsync();
+
+                // Thêm chi tiết combo
+                for (int i = 0; i < selectedProducts.Count; i++)
+                {
+                    var chiTiet = new ChiTietCombo
+                    {
+                        MaChiTietCombo = Guid.NewGuid(),
+                        MaCombo = combo.MaCombo,
+                        MaSanPham = selectedProducts[i],
+                        SoLuong = quantities != null && i < quantities.Count ? quantities[i] : 1
+                    };
+                    _context.ChiTietCombos.Add(chiTiet);
+                }
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.SanPhamList = await _context.SanPhams
+                .Where(sp => sp.TrangThai)
+                .ToListAsync();
+            
             return View(combo);
         }
 
@@ -74,31 +103,59 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var combo = await _context.Combos.FindAsync(id);
+            var combo = await _context.Combos
+                .Include(c => c.DanhSachChiTietCombo)
+                .FirstOrDefaultAsync(m => m.MaCombo == id);
+            
             if (combo == null)
             {
                 return NotFound();
             }
+
+            ViewBag.SanPhamList = await _context.SanPhams
+                .Where(sp => sp.TrangThai)
+                .ToListAsync();
+            
             return View(combo);
         }
 
         // POST: Combo/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MaCombo,TenCombo,Gia,MoTa")] Combo combo)
+        public async Task<IActionResult> Edit(Guid id, Combo combo, List<Guid> selectedProducts, List<int> quantities)
         {
             if (id != combo.MaCombo)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && selectedProducts != null && selectedProducts.Count > 0)
             {
                 try
                 {
+                    combo.NgayCapNhat = DateTime.Now;
                     _context.Update(combo);
+
+                    // Xóa chi tiết cũ
+                    var chiTietCu = await _context.ChiTietCombos
+                        .Where(ct => ct.MaCombo == id)
+                        .ToListAsync();
+                    
+                    _context.ChiTietCombos.RemoveRange(chiTietCu);
+
+                    // Thêm chi tiết mới
+                    for (int i = 0; i < selectedProducts.Count; i++)
+                    {
+                        var chiTiet = new ChiTietCombo
+                        {
+                            MaChiTietCombo = Guid.NewGuid(),
+                            MaCombo = combo.MaCombo,
+                            MaSanPham = selectedProducts[i],
+                            SoLuong = quantities != null && i < quantities.Count ? quantities[i] : 1
+                        };
+                        _context.ChiTietCombos.Add(chiTiet);
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -114,6 +171,11 @@ namespace ASM_WebBanNuocUong.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.SanPhamList = await _context.SanPhams
+                .Where(sp => sp.TrangThai)
+                .ToListAsync();
+            
             return View(combo);
         }
 
@@ -126,7 +188,10 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var combo = await _context.Combos
+                .Include(c => c.DanhSachChiTietCombo)
+                    .ThenInclude(ct => ct.SanPham)
                 .FirstOrDefaultAsync(m => m.MaCombo == id);
+            
             if (combo == null)
             {
                 return NotFound();
@@ -143,9 +208,12 @@ namespace ASM_WebBanNuocUong.Controllers
             var combo = await _context.Combos.FindAsync(id);
             if (combo != null)
             {
-                _context.Combos.Remove(combo);
+                // Soft delete
+                combo.TrangThai = false;
+                combo.NgayCapNhat = DateTime.Now;
+                _context.Update(combo);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ASM_WebBanNuocUong.Data;
 using ASM_WebBanNuocUong.Models;
@@ -19,11 +14,14 @@ namespace ASM_WebBanNuocUong.Controllers
             _context = context;
         }
 
-        // GET: Product
+        // GET: Product 
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.SanPhams.Include(p => p.DanhMuc);
-            return View(await appDbContext.ToListAsync());
+            var sanPhams = await _context.SanPhams
+                .Include(sp => sp.DanhMuc)
+                .Where(sp => sp.TrangThai)
+                .ToListAsync();
+            return View(sanPhams);
         }
 
         // GET: Product/Details/5
@@ -35,8 +33,9 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var sanPham = await _context.SanPhams
-                .Include(p => p.DanhMuc)
+                .Include(sp => sp.DanhMuc)
                 .FirstOrDefaultAsync(m => m.MaSanPham == id);
+            
             if (sanPham == null)
             {
                 return NotFound();
@@ -48,25 +47,31 @@ namespace ASM_WebBanNuocUong.Controllers
         // GET: Product/Create
         public IActionResult Create()
         {
-            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc");
+            ViewBag.DanhMucList = _context.DanhMucs
+                .Where(dm => dm.TrangThai)
+                .ToList();
             return View();
         }
 
         // POST: Product/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaSanPham,TenSanPham,Gia,HinhAnh,MoTa,ChuDe,MaDanhMuc")] SanPham sanPham)
+        public async Task<IActionResult> Create([Bind("TenSanPham,Gia,HinhAnh,MoTa,ChuDe,SoLuongTon,MaDanhMuc")] SanPham sanPham)
         {
             if (ModelState.IsValid)
             {
                 sanPham.MaSanPham = Guid.NewGuid();
+                sanPham.NgayTao = DateTime.Now;
+                sanPham.TrangThai = true;
+                
                 _context.Add(sanPham);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
+            
+            ViewBag.DanhMucList = _context.DanhMucs
+                .Where(dm => dm.TrangThai)
+                .ToList();
             return View(sanPham);
         }
 
@@ -83,16 +88,17 @@ namespace ASM_WebBanNuocUong.Controllers
             {
                 return NotFound();
             }
-            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
+            
+            ViewBag.DanhMucList = _context.DanhMucs
+                .Where(dm => dm.TrangThai)
+                .ToList();
             return View(sanPham);
         }
 
         // POST: Product/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MaSanPham,TenSanPham,Gia,HinhAnh,MoTa,ChuDe,MaDanhMuc")] SanPham sanPham)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MaSanPham,TenSanPham,Gia,HinhAnh,MoTa,ChuDe,TrangThai,SoLuongTon,MaDanhMuc,NgayTao")] SanPham sanPham)
         {
             if (id != sanPham.MaSanPham)
             {
@@ -103,6 +109,7 @@ namespace ASM_WebBanNuocUong.Controllers
             {
                 try
                 {
+                    sanPham.NgayCapNhat = DateTime.Now;
                     _context.Update(sanPham);
                     await _context.SaveChangesAsync();
                 }
@@ -119,7 +126,10 @@ namespace ASM_WebBanNuocUong.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaDanhMuc"] = new SelectList(_context.DanhMucs, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
+            
+            ViewBag.DanhMucList = _context.DanhMucs
+                .Where(dm => dm.TrangThai)
+                .ToList();
             return View(sanPham);
         }
 
@@ -132,8 +142,9 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var sanPham = await _context.SanPhams
-                .Include(p => p.DanhMuc)
+                .Include(sp => sp.DanhMuc)
                 .FirstOrDefaultAsync(m => m.MaSanPham == id);
+            
             if (sanPham == null)
             {
                 return NotFound();
@@ -150,9 +161,12 @@ namespace ASM_WebBanNuocUong.Controllers
             var sanPham = await _context.SanPhams.FindAsync(id);
             if (sanPham != null)
             {
-                _context.SanPhams.Remove(sanPham);
+                // Soft delete: chỉ đổi trạng thái
+                sanPham.TrangThai = false;
+                sanPham.NgayCapNhat = DateTime.Now;
+                _context.Update(sanPham);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

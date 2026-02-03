@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ASM_WebBanNuocUong.Data;
 using ASM_WebBanNuocUong.Models;
@@ -34,7 +29,9 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var danhMuc = await _context.DanhMucs
+                .Include(dm => dm.DanhSachSanPham)
                 .FirstOrDefaultAsync(m => m.MaDanhMuc == id);
+            
             if (danhMuc == null)
             {
                 return NotFound();
@@ -50,15 +47,16 @@ namespace ASM_WebBanNuocUong.Controllers
         }
 
         // POST: Category/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaDanhMuc,TenDanhMuc")] DanhMuc danhMuc)
+        public async Task<IActionResult> Create([Bind("TenDanhMuc")] DanhMuc danhMuc)
         {
             if (ModelState.IsValid)
             {
                 danhMuc.MaDanhMuc = Guid.NewGuid();
+                danhMuc.NgayTao = DateTime.Now;
+                danhMuc.TrangThai = true;
+                
                 _context.Add(danhMuc);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,11 +81,9 @@ namespace ASM_WebBanNuocUong.Controllers
         }
 
         // POST: Category/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MaDanhMuc,TenDanhMuc")] DanhMuc danhMuc)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MaDanhMuc,TenDanhMuc,TrangThai,NgayTao")] DanhMuc danhMuc)
         {
             if (id != danhMuc.MaDanhMuc)
             {
@@ -98,6 +94,7 @@ namespace ASM_WebBanNuocUong.Controllers
             {
                 try
                 {
+                    danhMuc.NgayCapNhat = DateTime.Now;
                     _context.Update(danhMuc);
                     await _context.SaveChangesAsync();
                 }
@@ -126,7 +123,9 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             var danhMuc = await _context.DanhMucs
+                .Include(dm => dm.DanhSachSanPham)
                 .FirstOrDefaultAsync(m => m.MaDanhMuc == id);
+            
             if (danhMuc == null)
             {
                 return NotFound();
@@ -143,9 +142,12 @@ namespace ASM_WebBanNuocUong.Controllers
             var danhMuc = await _context.DanhMucs.FindAsync(id);
             if (danhMuc != null)
             {
-                _context.DanhMucs.Remove(danhMuc);
+                // Soft delete
+                danhMuc.TrangThai = false;
+                danhMuc.NgayCapNhat = DateTime.Now;
+                _context.Update(danhMuc);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
