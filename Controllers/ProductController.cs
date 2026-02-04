@@ -32,9 +32,8 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var sanPham = await _context.SanPhams
-                .Include(sp => sp.DanhMuc)
-                .FirstOrDefaultAsync(m => m.MaSanPham == id);
+    var sanPham = await _context.SanPhams
+        .FirstOrDefaultAsync(m => m.MaSanPham == id);
             
             if (sanPham == null)
             {
@@ -141,9 +140,8 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var sanPham = await _context.SanPhams
-                .Include(sp => sp.DanhMuc)
-                .FirstOrDefaultAsync(m => m.MaSanPham == id);
+    var sanPham = await _context.SanPhams
+        .FirstOrDefaultAsync(m => m.MaSanPham == id);
             
             if (sanPham == null)
             {

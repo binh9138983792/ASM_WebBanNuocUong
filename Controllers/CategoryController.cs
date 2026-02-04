@@ -28,9 +28,8 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var danhMuc = await _context.DanhMucs
-                .Include(dm => dm.DanhSachSanPham)
-                .FirstOrDefaultAsync(m => m.MaDanhMuc == id);
+    var danhMuc = await _context.DanhMucs
+        .FirstOrDefaultAsync(m => m.MaDanhMuc == id);
             
             if (danhMuc == null)
             {

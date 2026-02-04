@@ -8,9 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Thêm dòng này để đọc User Secrets
 builder.Configuration.AddUserSecrets<Program>();
 
-// 1. Đăng ký DbContext và kết nối SQL Server
+// 1. Đăng ký DbContext và kết nối SQL Server VỚI LAZY LOADING
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseLazyLoadingProxies() 
+           .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 2. Cấu hình Session (Giỏ hàng)
 builder.Services.AddDistributedMemoryCache();

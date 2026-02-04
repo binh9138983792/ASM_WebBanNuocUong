@@ -36,13 +36,8 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            var donHang = await _context.DonHangs
-                .Include(dh => dh.NguoiDung)
-                .Include(dh => dh.DanhSachChiTiet)
-                    .ThenInclude(ct => ct.SanPham)
-                .Include(dh => dh.DanhSachChiTiet)
-                    .ThenInclude(ct => ct.Combo)
-                .FirstOrDefaultAsync(m => m.MaDonHang == id);
+    var donHang = await _context.DonHangs
+        .FirstOrDefaultAsync(m => m.MaDonHang == id);
             
             if (donHang == null)
             {
