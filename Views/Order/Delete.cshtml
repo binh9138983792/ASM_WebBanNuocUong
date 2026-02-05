@@ -1,0 +1,50 @@
+@model DonHang
+@{
+    ViewData["Title"] = "Xóa đơn hàng";
+}
+
+<div class="container mt-5 text-center">
+    <div class="card border-0 shadow-lg rounded-4 border-bottom border-danger border-5 mx-auto" style="max-width: 450px;">
+        <div class="card-body p-5">
+            <div class="text-danger mb-3 display-3"><i class="fas fa-trash-alt"></i></div>
+            <h4 class="fw-bold">Xác nhận xóa đơn hàng</h4>
+            <p class="text-muted">Đơn hàng <strong>#@Model.MaDonHang.ToString().Substring(0, 8).ToUpper()</strong> sẽ bị xóa vĩnh viễn.</p>
+            
+            <div class="alert alert-light text-start mb-4">
+                <div class="d-flex justify-content-between">
+                    <span><strong>Khách hàng:</strong></span>
+                    <span>@Model.NguoiDung?.HoTen</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span><strong>Ngày đặt:</strong></span>
+                    <span>@Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span><strong>Tổng tiền:</strong></span>
+                    <span class="text-danger fw-bold">@Model.TongTien.ToString("N0") VNĐ</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span><strong>Trạng thái:</strong></span>
+                    <span class="badge bg-@(Model.TrangThai == "Đã giao" ? "success" : 
+                                        Model.TrangThai == "Đã hủy" ? "danger" : 
+                                        Model.TrangThai == "Đang giao" ? "warning" : 
+                                        "secondary")">
+                        @Model.TrangThai
+                    </span>
+                </div>
+            </div>
+            
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" name="id" value="@Model.MaDonHang" />
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 shadow fw-bold">
+                        <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-pill py-2">
+                        <i class="fas fa-times me-1"></i> Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

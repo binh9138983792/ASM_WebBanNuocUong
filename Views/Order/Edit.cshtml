@@ -1,0 +1,252 @@
+@model DonHang
+@{
+    ViewData["Title"] = "Sửa đơn hàng";
+    bool isCancelled = Model.TrangThai == "Đã hủy";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card border-0 shadow-lg rounded-4 border-top border-warning border-5">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4 text-center">
+                        <i class="fas fa-edit me-2 text-warning"></i>
+                        @if (isCancelled)
+                        {
+                            <span class="text-danger">Xem đơn hàng đã hủy</span>
+                        }
+                        else
+                        {
+                            <span>Sửa Đơn Hàng #@Model.MaDonHang.ToString().Substring(0, 8).ToUpper()</span>
+                        }
+                    </h3>
+                    
+                    @if (isCancelled)
+                    {
+                        <div class="alert alert-danger mb-4">
+                            <i class="fas fa-ban me-2"></i>
+                            Đơn hàng này đã bị hủy. Bạn chỉ có thể xem thông tin.
+                        </div>
+                    }
+                    
+                    <form asp-action="Edit" id="orderForm">
+                        <input type="hidden" asp-for="MaDonHang" />
+                        
+                        <!-- THÔNG TIN ĐƠN HÀNG -->
+                        <div class="mb-4 border rounded-3 p-4 bg-light">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-info"></i>Thông tin đơn hàng</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small">Khách hàng</label>
+                                        @if (isCancelled)
+                                        {
+                                            <select asp-for="MaNguoiDung" class="form-control rounded-3 shadow-sm bg-light" disabled>
+                                                <option value="">Chọn khách hàng</option>
+                                                @if (ViewBag.KhachHangList != null)
+                                                {
+                                                    foreach (var kh in ViewBag.KhachHangList)
+                                                    {
+                                                        <option value="@kh.MaNguoiDung" selected="@(Model.MaNguoiDung == kh.MaNguoiDung)">
+                                                            @kh.HoTen (@kh.Email)
+                                                        </option>
+                                                    }
+                                                }
+                                            </select>
+                                            <input type="hidden" asp-for="MaNguoiDung" />
+                                        }
+                                        else
+                                        {
+                                            <select asp-for="MaNguoiDung" class="form-control rounded-3 shadow-sm" required>
+                                                <option value="">Chọn khách hàng</option>
+                                                @if (ViewBag.KhachHangList != null)
+                                                {
+                                                    foreach (var kh in ViewBag.KhachHangList)
+                                                    {
+                                                        <option value="@kh.MaNguoiDung" selected="@(Model.MaNguoiDung == kh.MaNguoiDung)">
+                                                            @kh.HoTen (@kh.Email)
+                                                        </option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label asp-for="TrangThai" class="form-label fw-bold small">Trạng thái</label>
+                                        @if (isCancelled)
+                                        {
+                                            <select asp-for="TrangThai" class="form-control rounded-3 shadow-sm bg-light" disabled>
+                                                <option value="Chờ xác nhận">Chờ xác nhận</option>
+                                                <option value="Đang giao">Đang giao</option>
+                                                <option value="Đã giao">Đã giao</option>
+                                                <option value="Đã hủy">Đã hủy</option>
+                                            </select>
+                                            <input type="hidden" asp-for="TrangThai" />
+                                        }
+                                        else
+                                        {
+                                            <select asp-for="TrangThai" class="form-control rounded-3 shadow-sm">
+                                                <option value="Chờ xác nhận">Chờ xác nhận</option>
+                                                <option value="Đang giao">Đang giao</option>
+                                                <option value="Đã giao">Đã giao</option>
+                                                <option value="Đã hủy">Đã hủy</option>
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label asp-for="NgayGiao" class="form-label fw-bold small">Ngày giao</label>
+                                        @if (isCancelled)
+                                        {
+                                            <input asp-for="NgayGiao" type="datetime-local" 
+                                                   class="form-control rounded-3 shadow-sm bg-light" disabled />
+                                            <input type="hidden" asp-for="NgayGiao" />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="NgayGiao" type="datetime-local" 
+                                                   class="form-control rounded-3 shadow-sm" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label asp-for="GhiChu" class="form-label fw-bold small">Ghi chú</label>
+                                        @if (isCancelled)
+                                        {
+                                            <textarea asp-for="GhiChu" class="form-control rounded-3 shadow-sm bg-light" rows="2" disabled></textarea>
+                                            <input type="hidden" asp-for="GhiChu" />
+                                        }
+                                        else
+                                        {
+                                            <textarea asp-for="GhiChu" class="form-control rounded-3 shadow-sm" rows="2"></textarea>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CHI TIẾT ĐƠN HÀNG (CHỈ XEM) -->
+                        <div class="mb-4 border rounded-3 p-4 bg-light">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-list me-2 text-success"></i>Chi tiết đơn hàng</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Sản phẩm/Combo</th>
+                                            <th class="text-center">Số lượng</th>
+                                            <th class="text-end">Đơn giá</th>
+                                            <th class="text-end">Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.DanhSachChiTiet != null)
+                                        {
+                                            foreach (var ct in Model.DanhSachChiTiet)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @if (ct.LoaiSanPham == "Combo")
+                                                        {
+                                                            <span class="badge bg-info me-2">COMBO</span>
+                                                            <span>@ct.Combo?.TenCombo</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@ct.SanPham?.TenSanPham</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center">@ct.SoLuong</td>
+                                                    <td class="text-end">@ct.Gia.ToString("N0")đ</td>
+                                                    <td class="text-end fw-bold text-dark">@((ct.SoLuong * ct.Gia).ToString("N0"))đ</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
+                                            <td class="text-end text-danger fw-bold">@Model.TongTien.ToString("N0")đ</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a asp-action="Index" class="text-muted fw-bold small">
+                                <i class="fas fa-chevron-left me-1"></i> Quay về
+                            </a>
+                            <div>
+                                @if (!isCancelled)
+                                {
+                                    <button type="submit" class="btn btn-warning px-5 rounded-pill shadow fw-bold me-2">
+                                        <i class="fas fa-save me-1"></i> Lưu thay đổi
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger px-4 rounded-pill" onclick="deleteOrder('@Model.MaDonHang')">
+                                        <i class="fas fa-trash-alt me-1"></i> Xóa đơn
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-secondary px-5 rounded-pill shadow fw-bold" disabled>
+                                        <i class="fas fa-ban me-1"></i> Đã hủy - Không thể chỉnh sửa
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function deleteOrder(orderId) {
+        if (confirm('Bạn có chắc muốn xóa đơn hàng này?')) {
+            fetch(`/Order/Delete/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/Order';
+                } else {
+                    alert('Có lỗi xảy ra khi xóa đơn hàng');
+                }
+            })
+            .catch(error => {
+                alert('Có lỗi xảy ra: ' + error.message);
+            });
+        }
+    }
+    
+    // Khóa toàn bộ form nếu đơn đã hủy
+    document.addEventListener('DOMContentLoaded', function() {
+        const isCancelled = @(isCancelled.ToString().ToLower());
+        
+        if (isCancelled) {
+            // Thêm lớp CSS để hiển thị trạng thái chỉ đọc
+            document.querySelectorAll('.form-control, .form-select').forEach(element => {
+                element.classList.add('bg-light');
+                element.style.cursor = 'not-allowed';
+            });
+            
+            // Vô hiệu hóa tất cả nút bấm trong form
+            document.querySelectorAll('button[type="button"]').forEach(button => {
+                button.disabled = true;
+                button.classList.add('disabled');
+            });
+        }
+    });
+</script>
+}

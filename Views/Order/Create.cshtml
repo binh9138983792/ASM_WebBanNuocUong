@@ -1,0 +1,243 @@
+@model DonHang
+@{
+    ViewData["Title"] = "Tạo đơn hàng";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4 text-center"><i class="fas fa-plus-circle me-2 text-primary"></i>Tạo Đơn Hàng Mới</h3>
+                    
+                    <form asp-action="Create" id="orderForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <!-- THÔNG TIN KHÁCH HÀNG -->
+                        <div class="mb-4 border rounded-3 p-4 bg-light">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-user me-2 text-info"></i>Thông tin khách hàng</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="MaNguoiDung" class="form-label fw-bold small">Khách hàng</label>
+                                        <select asp-for="MaNguoiDung" class="form-control rounded-3 shadow-sm" required>
+                                            <option value="">Chọn khách hàng</option>
+                                            @if (ViewBag.KhachHangList != null)
+                                            {
+                                                foreach (var kh in ViewBag.KhachHangList)
+                                                {
+                                                    <option value="@kh.MaNguoiDung">@kh.HoTen (@kh.Email)</option>
+                                                }
+                                            }
+                                        </select>
+                                        <span asp-validation-for="MaNguoiDung" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="GhiChu" class="form-label fw-bold small">Ghi chú</label>
+                                        <textarea asp-for="GhiChu" class="form-control rounded-3 shadow-sm" rows="2" placeholder="Ghi chú cho đơn hàng..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SẢN PHẨM -->
+                        <div class="mb-4 border rounded-3 p-4 bg-light">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-box me-2 text-success"></i>Sản phẩm</h5>
+                            <div id="product-container">
+                                <!-- Sản phẩm sẽ được thêm vào đây -->
+                            </div>
+                            <button type="button" class="btn btn-outline-success btn-sm mt-3 me-2" onclick="addProduct()">
+                                <i class="fas fa-plus-circle me-1"></i> Thêm sản phẩm
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm mt-3" onclick="addCombo()">
+                                <i class="fas fa-boxes me-1"></i> Thêm combo
+                            </button>
+                        </div>
+
+                        <!-- THÔNG TIN THANH TOÁN -->
+                        <div class="mb-4 border rounded-3 p-4 bg-light">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-money-bill-wave me-2 text-warning"></i>Thanh toán</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="TongTien" class="form-label fw-bold small">Tổng tiền</label>
+                                        <input asp-for="TongTien" type="number" id="tongTien" class="form-control rounded-3 shadow-sm" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small">Phương thức thanh toán</label>
+                                        <select class="form-control rounded-3 shadow-sm">
+                                            <option value="Tiền mặt">Tiền mặt</option>
+                                            <option value="Chuyển khoản">Chuyển khoản</option>
+                                            <option value="Thẻ">Thẻ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a asp-action="Index" class="text-muted fw-bold small">
+                                <i class="fas fa-chevron-left me-1"></i> Quay về
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow fw-bold">
+                                <i class="fas fa-check-circle me-1"></i> Tạo đơn
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let itemCount = 0;
+    
+    function addProduct() {
+        itemCount++;
+        const container = document.getElementById('product-container');
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'row mb-3 align-items-center order-item';
+        itemDiv.id = `item-${itemCount}`;
+        
+        itemDiv.innerHTML = `
+            <div class="col-md-5">
+                <select name="selectedProducts" class="form-select product-select" onchange="updateTotal()">
+                    <option value="">Chọn sản phẩm</option>
+                    @if (ViewBag.SanPhamList != null)
+                    {
+                        foreach (var sp in ViewBag.SanPhamList)
+                        {
+                            <option value="@sp.MaSanPham" data-price="@sp.Gia">@sp.TenSanPham - @sp.Gia.ToString("N0")đ</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="productQuantities" class="form-control quantity" 
+                       value="1" min="1" onchange="updateTotal()" placeholder="Số lượng">
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control subtotal" value="0" readonly>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeItem(${itemCount})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(itemDiv);
+    }
+    
+    function addCombo() {
+        itemCount++;
+        const container = document.getElementById('product-container');
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'row mb-3 align-items-center order-item';
+        itemDiv.id = `item-${itemCount}`;
+        
+        itemDiv.innerHTML = `
+            <div class="col-md-5">
+                <select name="selectedCombos" class="form-select combo-select" onchange="updateTotal()">
+                    <option value="">Chọn combo</option>
+                    @if (ViewBag.ComboList != null)
+                    {
+                        foreach (var combo in ViewBag.ComboList)
+                        {
+                            <option value="@combo.MaCombo" data-price="@combo.Gia">@combo.TenCombo - @combo.Gia.ToString("N0")đ</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="comboQuantities" class="form-control quantity" 
+                       value="1" min="1" onchange="updateTotal()" placeholder="Số lượng">
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control subtotal" value="0" readonly>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeItem(${itemCount})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(itemDiv);
+    }
+    
+    function removeItem(id) {
+        const element = document.getElementById(`item-${id}`);
+        if (element) {
+            element.remove();
+            updateTotal();
+        }
+    }
+    
+    function updateTotal() {
+        let total = 0;
+        
+        document.querySelectorAll('.order-item').forEach(item => {
+            const select = item.querySelector('.product-select, .combo-select');
+            const quantityInput = item.querySelector('.quantity');
+            const subtotalInput = item.querySelector('.subtotal');
+            
+            if (select && select.value && quantityInput) {
+                const price = parseFloat(select.options[select.selectedIndex].dataset.price);
+                const quantity = parseInt(quantityInput.value) || 0;
+                const subtotal = price * quantity;
+                
+                if (subtotalInput) {
+                    subtotalInput.value = subtotal.toLocaleString('vi-VN') + 'đ';
+                }
+                
+                total += subtotal;
+            }
+        });
+        
+        // Cập nhật tổng tiền
+        const totalInput = document.getElementById('tongTien');
+        if (totalInput) {
+            totalInput.value = total;
+        }
+    }
+    
+    // Validate form
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+        const orderItems = document.querySelectorAll('.order-item');
+        if (orderItems.length === 0) {
+            e.preventDefault();
+            alert('Vui lòng thêm ít nhất một sản phẩm hoặc combo vào đơn hàng!');
+            return false;
+        }
+        
+        // Kiểm tra các mục có được chọn đầy đủ không
+        let isValid = true;
+        document.querySelectorAll('.product-select, .combo-select').forEach(select => {
+            if (!select.value) {
+                select.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                select.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Vui lòng chọn sản phẩm/combo cho tất cả các mục!');
+            return false;
+        }
+        
+        return true;
+    });
+    
+    // Thêm một sản phẩm mặc định khi trang load
+    document.addEventListener('DOMContentLoaded', addProduct);
+</script>
+}

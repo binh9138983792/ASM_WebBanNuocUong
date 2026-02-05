@@ -1,34 +1,100 @@
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Quản Lý Đơn Hàng</h4>
-            <span class="badge bg-primary">Tổng số: 3 đơn hàng mới</span>
+@model IEnumerable<DonHang>
+@{
+    ViewData["Title"] = "Quản lý Đơn hàng";
+}
+
+<div class="container mt-5">
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+            <h4 class="fw-bold m-0 text-dark"><i class="fas fa-shopping-cart me-2 text-primary"></i>Quản Lý Đơn Hàng</h4>
+            <a asp-action="Create" class="btn btn-success rounded-pill px-4 shadow-sm">
+                <i class="fas fa-plus-circle me-1"></i> Tạo đơn mới
+            </a>
         </div>
-        <div class="card-body">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Mã Đơn</th>
-                        <th>Khách Hàng</th>
-                        <th>Ngày Đặt</th>
-                        <th>Tổng Tiền</th>
-                        <th>Trạng Thái</th>
-                        <th>Thao Tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>#ORD001</td>
-                        <td><strong>Nguyễn Văn A</strong></td>
-                        <td>30/01/2026</td>
-                        <td class="text-danger fw-bold">150,000 VNĐ</td>
-                        <td><span class="badge bg-warning text-dark">Chưa giao</span></td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="ORD001" class="btn btn-sm btn-outline-info">Xem chi tiết</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 py-3">
+                                    <span class="fw-bold text-dark">#@order.MaDonHang.ToString().Substring(0, 8).ToUpper()</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">@order.NguoiDung?.HoTen</span>
+                                </td>
+                                <td>@order.NgayDat.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="text-danger fw-bold">@order.TongTien.ToString("N0") VNĐ</span>
+                                </td>
+                                <td>
+                                    @{
+                                        var statusClass = order.TrangThai == "Đã giao" ? "bg-success" : 
+                                                        order.TrangThai == "Đã hủy" ? "bg-danger" : 
+                                                        order.TrangThai == "Đang giao" ? "bg-warning" : 
+                                                        "bg-secondary";
+                                    }
+                                    <span class="badge @statusClass">@order.TrangThai</span>
+                                </td>
+                                <td class="text-center pe-4">
+                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
+                                        <a asp-action="Edit" asp-route-id="@order.MaDonHang" class="btn btn-white btn-sm px-3 text-warning border-end" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@order.MaDonHang" class="btn btn-white btn-sm px-3 text-info border-end" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (order.TrangThai == "Chờ xác nhận")
+                                        {
+                                            <button onclick="cancelOrder('@order.MaDonHang')" class="btn btn-white btn-sm px-3 text-danger" title="Hủy đơn">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    async function cancelOrder(orderId) {
+        if (confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+            try {
+                const response = await fetch(`/Order/Cancel/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    location.reload();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Có lỗi xảy ra: ' + error.message);
+            }
+        }
+    }
+</script>
+}

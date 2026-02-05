@@ -1,6 +1,7 @@
-@model IEnumerable<ASM_WebBanNuocUong.Models.Combo>
-
-@{ ViewData["Title"] = "Danh sách Combo"; }
+@model IEnumerable<Combo>
+@{
+    ViewData["Title"] = "Danh sách Combo";
+}
 
 <div class="container mt-5">
     <div class="card border-0 shadow-sm rounded-4">
@@ -17,12 +18,14 @@
                         <tr>
                             <th class="ps-4">Tên Combo</th>
                             <th>Giá Combo</th>
-                            <th>Mô tả chi tiết</th>
+                            <th>Trạng thái</th>
+                            <th>Mô tả</th>
                             <th class="text-center">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model) {
+                        @foreach (var item in Model) 
+                        {
                             <tr>
                                 <td class="ps-4 py-3">
                                     <span class="fw-bold text-dark h6">@item.TenCombo</span>
@@ -30,12 +33,37 @@
                                 <td>
                                     <span class="text-danger fw-bold">@item.Gia.ToString("N0") VNĐ</span>
                                 </td>
-                                <td class="text-muted small">@item.MoTa</td>
+                                <td>
+                                    @if (item.TrangThai)
+                                    {
+                                        <span class="badge bg-success">Đang bán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Ngừng bán</span>
+                                    }
+                                </td>
+                                <td class="text-muted small">
+                                    @if (!string.IsNullOrEmpty(item.MoTa))
+                                    {
+                                        @(item.MoTa.Length > 50 ? item.MoTa.Substring(0, 50) + "..." : item.MoTa)
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Không có mô tả</span>
+                                    }
+                                </td>
                                 <td class="text-center pe-4">
                                     <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
-                                        <a asp-action="Edit" asp-route-id="@item.MaCombo" class="btn btn-white btn-sm px-3 text-warning border-end" title="Sửa"><i class="fas fa-edit"></i></a>
-                                        <a asp-action="Details" asp-route-id="@item.MaCombo" class="btn btn-white btn-sm px-3 text-info border-end" title="Chi tiết"><i class="fas fa-eye"></i></a>
-                                        <a asp-action="Delete" asp-route-id="@item.MaCombo" class="btn btn-white btn-sm px-3 text-danger" title="Xóa"><i class="fas fa-trash-alt"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@item.MaCombo" class="btn btn-white btn-sm px-3 text-warning border-end" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.MaCombo" class="btn btn-white btn-sm px-3 text-info border-end" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaCombo" class="btn btn-white btn-sm px-3 text-danger" title="Xóa">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

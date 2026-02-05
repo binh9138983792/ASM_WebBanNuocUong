@@ -88,19 +88,20 @@ public class AppDbContext : DbContext {
         
         // ========== CẤU HÌNH GIÁ TRỊ MẶC ĐỊNH ==========
         
-        // Giá trị mặc định cho trạng thái
-        modelBuilder.Entity<SanPham>()
-            .Property(sp => sp.TrangThai)
-            .HasDefaultValue(true);
-        
         modelBuilder.Entity<DanhMuc>()
             .Property(dm => dm.TrangThai)
             .HasDefaultValue(true);
         
         modelBuilder.Entity<Combo>()
-            .Property(c => c.TrangThai)
-            .HasDefaultValue(true);
-        
+    .HasMany(c => c.DanhSachChiTietCombo)
+    .WithOne(ct => ct.Combo)
+    .HasForeignKey(ct => ct.MaCombo);
+
+modelBuilder.Entity<SanPham>()
+    .HasMany(sp => sp.DanhSachChiTietCombo)
+    .WithOne(ct => ct.SanPham)
+    .HasForeignKey(ct => ct.MaSanPham);
+
         modelBuilder.Entity<NguoiDung>()
             .Property(nd => nd.TrangThai)
             .HasDefaultValue(true);

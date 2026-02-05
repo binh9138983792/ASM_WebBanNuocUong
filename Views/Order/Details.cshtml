@@ -1,5 +1,4 @@
-@model ASM_WebBanNuocUong.Models.DonHang
-
+@model DonHang
 @{
     ViewData["Title"] = "Chi tiết đơn hàng";
 }
@@ -7,83 +6,289 @@
 <div class="container mt-5 mb-5">
     <div class="card shadow rounded-4 border-0 overflow-hidden">
         <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold mb-0" style="color: #5D4037;">
-                <i class="fas fa-file-invoice me-2"></i>Chi tiết đơn hàng #@Model.MaDonHang.ToString().Substring(0, 8).ToUpper()
-            </h4>
-            <a asp-action="History" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <div>
+                <h4 class="fw-bold mb-0" style="color: #5D4037;">
+                    <i class="fas fa-file-invoice me-2"></i>
+                    Đơn hàng #@Model.MaDonHang.ToString().Substring(0, 8).ToUpper()
+                </h4>
+                <small class="text-muted">Ngày đặt: @Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</small>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
                 <i class="fas fa-arrow-left me-1"></i> Quay lại
             </a>
         </div>
         <div class="card-body p-4">
+            <!-- THÔNG TIN CƠ BẢN -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <p class="text-muted mb-1">Ngày đặt hàng</p>
-                    <h6 class="fw-bold">@Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</h6>
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-user me-2 text-primary"></i>Thông tin khách hàng</h6>
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <span class="text-muted">Họ tên:</span>
+                                    <span class="fw-bold d-block">@Model.NguoiDung?.HoTen</span>
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <span class="text-muted">Email:</span>
+                                    <span class="fw-bold d-block">@Model.NguoiDung?.Email</span>
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <span class="text-muted">Số điện thoại:</span>
+                                    <span class="fw-bold d-block">@Model.NguoiDung?.SoDienThoai</span>
+                                </div>
+                                <div class="col-12">
+                                    <span class="text-muted">Địa chỉ:</span>
+                                    <span class="fw-bold d-block">@Model.NguoiDung?.DiaChi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="text-muted mb-1">Trạng thái</p>
-                    @{
-                        var statusClass = Model.TrangThai == "Đã giao" ? "bg-success" : (Model.TrangThai == "Đã hủy" ? "bg-danger" : "bg-warning text-dark");
-                    }
-                    <span class="badge @statusClass px-3 py-2 rounded-pill">@Model.TrangThai</span>
+                <div class="col-md-6">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-info-circle me-2 text-info"></i>Trạng thái đơn hàng</h6>
+                            <div class="text-center">
+                                @{
+                                    var statusClass = Model.TrangThai == "Đã giao" ? "bg-success" : 
+                                                    Model.TrangThai == "Đã hủy" ? "bg-danger" : 
+                                                    Model.TrangThai == "Đang giao" ? "bg-warning" : 
+                                                    "bg-secondary";
+                                    var statusIcon = Model.TrangThai == "Đã giao" ? "fa-check-circle" : 
+                                                   Model.TrangThai == "Đã hủy" ? "fa-ban" : 
+                                                   Model.TrangThai == "Đang giao" ? "fa-truck" : 
+                                                   "fa-clock";
+                                }
+                                <div class="mb-3">
+                                    <i class="fas @statusIcon fa-3x mb-2 text-@(statusClass.Replace("bg-", ""))"></i>
+                                    <h4 class="fw-bold text-@(statusClass.Replace("bg-", ""))">@Model.TrangThai</h4>
+                                </div>
+                                
+                                <div class="row text-start">
+                                    <div class="col-6">
+                                        <span class="text-muted">Ngày đặt:</span>
+                                        <div class="fw-bold">@Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</div>
+                                    </div>
+                                    @if (Model.NgayGiao.HasValue)
+                                    {
+                                        <div class="col-6">
+                                            <span class="text-muted">Ngày giao:</span>
+                                            <div class="fw-bold">@Model.NgayGiao.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="py-3">Sản phẩm / Combo</th>
-                            <th class="text-center py-3">Số lượng</th>
-                            <th class="text-end py-3">Đơn giá</th>
-                            <th class="text-end py-3">Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.DanhSachChiTiet != null)
-                        {
-                            foreach (var ct in Model.DanhSachChiTiet)
+            <!-- CHI TIẾT SẢN PHẨM -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-list me-2 text-success"></i>Chi tiết sản phẩm</h5>
+                    <span class="badge bg-primary">@Model.DanhSachChiTiet?.Count sản phẩm</span>
+                </div>
+                
+                <div class="table-responsive border rounded-3">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="py-3 ps-4">Sản phẩm</th>
+                                <th class="text-center py-3">Loại</th>
+                                <th class="text-center py-3">Số lượng</th>
+                                <th class="text-end py-3">Đơn giá</th>
+                                <th class="text-end py-3 pe-4">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.DanhSachChiTiet != null && Model.DanhSachChiTiet.Any())
                             {
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            @* Sửa logic ảnh: Ưu tiên lấy HinhAnh của SP, nếu null thì lấy ảnh mặc định của bạn *@
-                                            @{
-                                                var imgPath = ct.SanPham != null && !string.IsNullOrEmpty(ct.SanPham.HinhAnh) 
-                                                              ? ct.SanPham.HinhAnh 
-                                                              : "matcha đá xay.jpg";
-                                            }
-                                            <img src="/img/@imgPath" width="60" height="60" class="rounded-3 me-3 shadow-sm object-fit-cover" 
-                                                 onerror="this.src='/img/matcha đá xay.jpg'">
-                                            
-                                            <div>
-                                                <h6 class="fw-bold mb-0">
-                                                    @(ct.LoaiSanPham == "Combo" ? ct.Combo?.TenCombo : ct.SanPham?.TenSanPham)
-                                                </h6>
-                                                @if(ct.LoaiSanPham == "Combo") {
-                                                    <span class="badge bg-info text-white" style="font-size: 0.7rem;">Combo tiết kiệm</span>
-                                                } else {
-                                                    <small class="text-muted">Thức uống thơm ngon</small>
+                                foreach (var ct in Model.DanhSachChiTiet)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                @if (ct.LoaiSanPham == "Combo")
+                                                {
+                                                    <div class="bg-info rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-boxes text-white"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold mb-0">@ct.Combo?.TenCombo</h6>
+                                                        <small class="text-muted">@ct.Combo?.MoTa</small>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @if (!string.IsNullOrEmpty(ct.SanPham?.HinhAnh))
+                                                    {
+                                                        <img src="@ct.SanPham.HinhAnh" 
+                                                             class="rounded-3 me-3" 
+                                                             style="width: 50px; height: 50px; object-fit: cover;"
+                                                             alt="@ct.SanPham.TenSanPham">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                                            <i class="fas fa-glass-whiskey text-muted"></i>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <h6 class="fw-bold mb-0">@ct.SanPham?.TenSanPham</h6>
+                                                        <small class="text-muted">@ct.SanPham?.MoTa</small>
+                                                    </div>
                                                 }
                                             </div>
-                                        </div>
+                                        </td>
+                                        <td class="text-center">
+                                            @if (ct.LoaiSanPham == "Combo")
+                                            {
+                                                <span class="badge bg-info">COMBO</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">SẢN PHẨM</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="fw-bold">@ct.SoLuong</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span class="text-dark">@ct.Gia.ToString("N0")đ</span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <span class="fw-bold text-dark">@((ct.SoLuong * ct.Gia).ToString("N0"))đ</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <i class="fas fa-shopping-cart fa-2x text-muted mb-3"></i>
+                                        <p class="text-muted">Không có sản phẩm nào trong đơn hàng</p>
                                     </td>
-                                    <td class="text-center">@ct.SoLuong</td>
-                                    @* Đã dùng ct.Gia để khớp với Model của bạn *@
-                                    <td class="text-end">@ct.Gia.ToString("N0")đ</td>
-                                    <td class="text-end fw-bold text-dark">@((ct.SoLuong * ct.Gia).ToString("N0"))đ</td>
                                 </tr>
                             }
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="text-end fw-bold fs-5 py-4">Tổng cộng:</td>
-                            <td class="text-end text-danger fw-bold fs-5 py-4">@Model.TongTien.ToString("N0")đ</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TỔNG KẾT -->
+            <div class="row">
+                <div class="col-md-8">
+                    @if (!string.IsNullOrEmpty(Model.GhiChu))
+                    {
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-dark mb-2"><i class="fas fa-sticky-note me-2 text-warning"></i>Ghi chú:</h6>
+                                <p class="mb-0">@Model.GhiChu</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-dark text-white">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3"><i class="fas fa-receipt me-2"></i>Tổng kết thanh toán</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tạm tính:</span>
+                                <span>@Model.TongTien.ToString("N0")đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Phí vận chuyển:</span>
+                                <span>0đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Giảm giá:</span>
+                                <span>0đ</span>
+                            </div>
+                            <hr class="my-3" style="border-color: rgba(255,255,255,0.1);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0">Tổng cộng:</h5>
+                                <h4 class="fw-bold text-warning mb-0">@Model.TongTien.ToString("N0")đ</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NÚT HÀNH ĐỘNG -->
+            <div class="d-flex gap-2 justify-content-end mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.MaDonHang" class="btn btn-warning px-4 rounded-pill">
+                    <i class="fas fa-edit me-1"></i> Sửa đơn
+                </a>
+                @if (Model.TrangThai == "Chờ xác nhận")
+                {
+                    <button onclick="cancelOrder('@Model.MaDonHang')" class="btn btn-outline-danger px-4 rounded-pill">
+                        <i class="fas fa-times me-1"></i> Hủy đơn
+                    </button>
+                }
+                else if (Model.TrangThai == "Đang giao")
+                {
+                    <button onclick="updateStatus('@Model.MaDonHang', 'Đã giao')" class="btn btn-success px-4 rounded-pill">
+                        <i class="fas fa-check me-1"></i> Xác nhận đã giao
+                    </button>
+                }
+                else if (Model.TrangThai == "Đã hủy")
+                {
+                    <span class="badge bg-danger px-3 py-2 rounded-pill">
+                        <i class="fas fa-ban me-1"></i> Đã hủy
+                    </span>
+                }
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    async function cancelOrder(orderId) {
+        if (confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+            try {
+                const response = await fetch(`/Order/Cancel/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    location.reload();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Có lỗi xảy ra: ' + error.message);
+            }
+        }
+    }
+    
+    async function updateStatus(orderId, status) {
+        try {
+            const response = await fetch(`/Order/UpdateStatus/${orderId}?trangThai=${status}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                location.reload();
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+</script>
+}

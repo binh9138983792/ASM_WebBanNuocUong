@@ -19,14 +19,17 @@ namespace ASM_WebBanNuocUong.Controllers
 
         // GET: Product 
         public async Task<IActionResult> Index()
-            {
-                var sanPhams = await _context.SanPhams
-                    .Include(sp => sp.DanhMuc)
-                    .OrderByDescending(sp => sp.TrangThai) // Đang bán (true) trước, Ngừng bán (false) sau
-                    .ThenBy(sp => sp.TenSanPham) // Sau đó sắp xếp theo tên
-                    .ToListAsync();
-                return View(sanPhams);
-            }        public async Task<IActionResult> Details(Guid? id)
+        {
+            var sanPhams = await _context.SanPhams
+                .Include(sp => sp.DanhMuc)
+                .OrderByDescending(sp => sp.TrangThai)
+                .ThenBy(sp => sp.TenSanPham)
+                .ToListAsync();
+            return View(sanPhams);
+        }
+
+        // GET: Product/Details/5
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
@@ -61,8 +64,25 @@ namespace ASM_WebBanNuocUong.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TenSanPham,Gia,MoTa,ChuDe,SoLuongTon,MaDanhMuc,TrangThai")] SanPham sanPham, IFormFile HinhAnhFile)
         {
+            // Kiểm tra trùng tên sản phẩm khi tạo mới
             if (ModelState.IsValid)
             {
+                // Kiểm tra tên sản phẩm đã tồn tại chưa (không phân biệt hoa thường)
+                var existingProduct = await _context.SanPhams
+                    .FirstOrDefaultAsync(sp => sp.TenSanPham.ToLower() == sanPham.TenSanPham.ToLower());
+                
+                if (existingProduct != null)
+                {
+                    ModelState.AddModelError("TenSanPham", "Tên sản phẩm bị trùng");
+                    ViewBag.MaDanhMuc = new SelectList(
+                        _context.DanhMucs.Where(dm => dm.TrangThai), 
+                        "MaDanhMuc", 
+                        "TenDanhMuc", 
+                        sanPham.MaDanhMuc
+                    );
+                    return View(sanPham);
+                }
+
                 // Xử lý upload ảnh
                 if (HinhAnhFile != null && HinhAnhFile.Length > 0)
                 {
@@ -144,13 +164,31 @@ namespace ASM_WebBanNuocUong.Controllers
                 return NotFound();
             }
 
-            // Lấy sản phẩm cũ từ database để giữ ảnh cũ
+            // Kiểm tra trùng tên sản phẩm khi sửa
             var existingProduct = await _context.SanPhams.AsNoTracking()
                 .FirstOrDefaultAsync(p => p.MaSanPham == id);
             
             if (existingProduct == null)
             {
                 return NotFound();
+            }
+
+            // Kiểm tra tên sản phẩm đã tồn tại chưa (trừ sản phẩm hiện tại)
+            var duplicateProduct = await _context.SanPhams
+                .FirstOrDefaultAsync(sp => 
+                    sp.TenSanPham.ToLower() == sanPham.TenSanPham.ToLower() && 
+                    sp.MaSanPham != sanPham.MaSanPham);
+            
+            if (duplicateProduct != null)
+            {
+                ModelState.AddModelError("TenSanPham", "Tên sản phẩm bị trùng");
+                ViewBag.MaDanhMuc = new SelectList(
+                    _context.DanhMucs.Where(dm => dm.TrangThai), 
+                    "MaDanhMuc", 
+                    "TenDanhMuc", 
+                    sanPham.MaDanhMuc
+                );
+                return View(sanPham);
             }
 
             // Giữ ảnh cũ nếu không upload ảnh mới
@@ -244,7 +282,7 @@ namespace ASM_WebBanNuocUong.Controllers
             }
 
             // KIỂM TRA: KHÔNG cho xóa khi trạng thái là ĐANG BÁN (TrangThai = true)
-            if (sanPham.TrangThai) // TrangThai = true = Đang bán
+            if (sanPham.TrangThai)
             {
                 TempData["ErrorMessage"] = "Không thể xóa sản phẩm ĐANG BÁN. Vui lòng chuyển trạng thái sang 'Ngừng bán' trước khi xóa.";
                 return RedirectToAction(nameof(Index));
@@ -262,7 +300,7 @@ namespace ASM_WebBanNuocUong.Controllers
             if (sanPham != null)
             {
                 // KIỂM TRA: KHÔNG cho xóa khi trạng thái là ĐANG BÁN (TrangThai = true)
-                if (sanPham.TrangThai) // TrangThai = true = Đang bán
+                if (sanPham.TrangThai)
                 {
                     TempData["ErrorMessage"] = "Không thể xóa sản phẩm ĐANG BÁN!";
                     return RedirectToAction(nameof(Index));
@@ -296,7 +334,7 @@ namespace ASM_WebBanNuocUong.Controllers
             var sanPham = await _context.SanPhams.FindAsync(id);
             if (sanPham != null)
             {
-                sanPham.TrangThai = false; // Chuyển sang Ngừng bán
+                sanPham.TrangThai = false;
                 sanPham.NgayCapNhat = DateTime.Now;
                 _context.Update(sanPham);
                 
@@ -315,7 +353,7 @@ namespace ASM_WebBanNuocUong.Controllers
             var sanPham = await _context.SanPhams.FindAsync(id);
             if (sanPham != null)
             {
-                sanPham.TrangThai = true; // Chuyển sang Đang bán
+                sanPham.TrangThai = true;
                 sanPham.NgayCapNhat = DateTime.Now;
                 _context.Update(sanPham);
                 

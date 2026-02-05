@@ -1,15 +1,41 @@
-@model ASM_WebBanNuocUong.Models.Combo
+@model Combo
+@{
+    ViewData["Title"] = "Xóa Combo";
+}
+
 <div class="container mt-5 text-center">
     <div class="card border-0 shadow-lg rounded-4 border-bottom border-danger border-5 mx-auto" style="max-width: 450px;">
         <div class="card-body p-5">
             <div class="text-danger mb-3 display-3"><i class="fas fa-trash-alt"></i></div>
-            <h4 class="fw-bold">Bạn chắc chắn muốn xóa?</h4>
-            <p class="text-muted">Combo <strong>@Model.TenCombo</strong> sẽ bị gỡ bỏ vĩnh viễn.</p>
+            <h4 class="fw-bold">Xác nhận xóa Combo</h4>
+            <p class="text-muted">Combo <strong>"@Model.TenCombo"</strong> sẽ bị gỡ bỏ vĩnh viễn.</p>
+            
+            <!-- THÔNG TIN COMBO -->
+            <div class="alert alert-light text-start mb-4">
+                <div class="d-flex justify-content-between">
+                    <span><strong>Tên:</strong></span>
+                    <span>@Model.TenCombo</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span><strong>Giá:</strong></span>
+                    <span class="text-danger fw-bold">@Model.Gia.ToString("N0") VNĐ</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span><strong>Số sản phẩm:</strong></span>
+                    <span class="badge bg-info">@(Model.DanhSachChiTietCombo?.Count ?? 0)</span>
+                </div>
+            </div>
             
             <form asp-action="Delete" class="mt-4">
                 <input type="hidden" asp-for="MaCombo" />
-                <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 shadow mb-2">Xóa ngay bây giờ</button>
-                <a asp-action="Index" class="btn btn-light w-100 rounded-pill text-muted small">Hủy và quay về</a>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 shadow fw-bold">
+                        <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-pill py-2">
+                        <i class="fas fa-times me-1"></i> Hủy bỏ
+                    </a>
+                </div>
             </form>
         </div>
     </div>
