@@ -11,8 +11,8 @@ public class NguoiDung {
     public string? SoDienThoai { get; set; }
     public string? DiaChi { get; set; }
     public DateTime NgaySinh { get; set; }
-    public string VaiTro { get; set; } = "Customer"; // "Admin", "Customer", "Staff"
-    public bool TrangThai { get; set; } = true; // true: active, false: inactive
+    public string VaiTro { get; set; } = "Customer";
+    public bool TrangThai { get; set; } = true;
     public DateTime NgayTao { get; set; } = DateTime.Now;
     
     public virtual ICollection<DonHang>? DanhSachDonHang { get; set; }

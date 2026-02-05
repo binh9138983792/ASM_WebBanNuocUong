@@ -1,31 +1,85 @@
 @model ASM_WebBanNuocUong.Models.SanPham
 
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow rounded-4 overflow-hidden border-top border-danger border-5">
-                <div class="card-body p-5 text-center">
-                    <div class="display-1 text-danger mb-4">
-                        <i class="fas fa-exclamation-triangle"></i>
+        <div class="col-md-8">
+            @if (!Model.TrangThai)
+            {
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="bg-danger py-4 text-white">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-2"></i>
+                        <h3 class="fw-bold m-0">Xác nhận xóa vĩnh viễn</h3>
                     </div>
-                    <h3 class="fw-bold text-dark">Xác nhận xóa món?</h3>
-                    <p class="text-muted mb-4">Bạn có chắc chắn muốn xóa <strong>"@Model.TenSanPham"</strong> khỏi thực đơn? Thao tác này không thể hoàn tác.</p>
-                    
-                    <div class="bg-light p-3 rounded-3 mb-4 d-flex align-items-center">
-                        <img src="@Model.HinhAnh" class="rounded shadow-sm me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                        <div class="text-start">
-                            <div class="fw-bold">@Model.TenSanPham</div>
-                            <small class="text-danger">@Model.Gia.ToString("N0") đ</small>
+                    <div class="card-body p-5">
+                        <p class="fs-5 text-muted">Bạn có chắc chắn muốn xóa VĨNH VIỄN sản phẩm này?</p>
+                        <h2 class="fw-bold my-4" style="color: var(--brown-dark);">"@Model.TenSanPham"</h2>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p><strong>Mã sản phẩm:</strong> @Model.MaSanPham</p>
+                                <p><strong>Giá bán:</strong> @Model.Gia.ToString("N0") đ</p>
+                                <p><strong>Số lượng tồn:</strong> @Model.SoLuongTon</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Danh mục:</strong> @Model.DanhMuc?.TenDanhMuc</p>
+                                <p><strong>Trạng thái:</strong> 
+                                    <span class="badge bg-secondary">Ngừng bán</span>
+                                </p>
+                                <p><strong>Ngày tạo:</strong> @Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-danger border-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>CẢNH BÁO:</strong> 
+                            <ul class="mb-0 mt-2">
+                                <li>Hành động này sẽ xóa VĨNH VIỄN sản phẩm</li>
+                                <li>Không thể hoàn tác sau khi xóa</li>
+                                <li>Tất cả thông tin và hình ảnh sẽ bị xóa</li>
+                                <li>Ảnh sản phẩm cũng sẽ bị xóa khỏi hệ thống</li>
+                            </ul>
+                        </div>
+
+                        <form asp-action="Delete" class="mt-4">
+                            <input type="hidden" asp-for="MaSanPham" />
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger btn-lg rounded-pill shadow px-4">
+                                    <i class="fas fa-trash-alt me-2"></i>Xóa vĩnh viễn
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill">
+                                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="bg-warning py-4 text-dark">
+                        <i class="fas fa-ban fa-3x mb-2"></i>
+                        <h3 class="fw-bold m-0">Không thể xóa</h3>
+                    </div>
+                    <div class="card-body p-5 text-center">
+                        <h2 class="text-warning fw-bold mb-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>Sản phẩm đang bán
+                        </h2>
+                        <p class="fs-5 mb-4">Sản phẩm "<strong>@Model.TenSanPham</strong>" đang ở trạng thái <span class="badge bg-success">Đang bán</span>.</p>
+                        <p class="text-muted mb-4">Bạn không thể xóa sản phẩm đang bán. Vui lòng chuyển trạng thái sang "Ngừng bán" trước khi xóa.</p>
+                        
+                        <div class="d-grid gap-2 col-md-6 mx-auto">
+                            <a asp-action="Index" class="btn btn-primary rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                            </a>
                         </div>
                     </div>
-
-                    <form asp-action="Delete">
-                        <input type="hidden" asp-for="MaSanPham" />
-                        <button type="submit" class="btn btn-danger btn-lg w-100 rounded-pill shadow mb-3">Vâng, Xóa món này!</button>
-                        <a asp-action="Index" class="btn btn-light btn-sm text-muted rounded-pill w-100 border text-decoration-none">Hủy bỏ và quay lại</a>
-                    </form>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>

@@ -5,75 +5,254 @@
 }
 
 <div class="container mt-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="card border-0 shadow-sm rounded-4">
-        @* Header: Chứa tiêu đề và nút thêm mới *@
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
-            <h4 class="fw-bold m-0 text-dark">
-                <i class="fas fa-coffee me-2 text-primary"></i>Quản Lý Menu Nước Uống
-            </h4>
-            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                <i class="fas fa-plus-circle me-1"></i> Thêm món mới
-            </a>
+        <!-- Header với nút Tạo mới và thống kê -->
+        <div class="card-header bg-white py-4 border-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h4 class="fw-bold m-0 text-dark">
+                        <i class="fas fa-coffee me-2 text-primary"></i>Quản Lý Sản Phẩm
+                    </h4>
+                    <div class="mt-2">
+                        <a asp-action="Create" class="btn btn-success rounded-pill px-4 shadow-sm">
+                            <i class="fas fa-plus-circle me-2"></i>Tạo mới
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                        <span class="badge bg-success px-3 py-2 rounded-pill">
+                            <i class="fas fa-check-circle me-1"></i>Đang bán: <strong>@Model.Count(p => p.TrangThai)</strong>
+                        </span>
+                        <span class="badge bg-secondary px-3 py-2 rounded-pill">
+                            <i class="fas fa-pause-circle me-1"></i>Ngừng bán: <strong>@Model.Count(p => !p.TrangThai)</strong>
+                        </span>
+                        <span class="badge bg-info px-3 py-2 rounded-pill">
+                            <i class="fas fa-box me-1"></i>Tổng: <strong>@Model.Count()</strong>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- Bảng sản phẩm -->
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                    <thead class="table-dark">
                         <tr>
-                            <th class="ps-4" style="width: 15%">Hình ảnh</th>
-                            <th style="width: 30%">Tên sản phẩm</th>
-                            <th style="width: 15%">Giá bán</th>
-                            <th style="width: 20%">Danh mục / Chủ đề</th>
-                            <th class="text-center" style="width: 20%">Thao tác</th>
+                            <th class="ps-4" style="width: 10%">Hình ảnh</th>
+                            <th style="width: 22%">Tên sản phẩm</th>
+                            <th style="width: 12%">Giá bán</th>
+                            <th style="width: 10%">Số lượng</th>
+                            <th style="width: 12%">Trạng thái</th>
+                            <th style="width: 18%">Danh mục</th>
+                            <th class="text-center" style="width: 16%">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model) {
-                            <tr>
-                                <td class="ps-4 py-3">
-                                    <div class="rounded-3 shadow-sm border overflow-hidden" style="width:70px; height:70px; background-color: #f8f9fa;">
-                                        @if (!string.IsNullOrEmpty(item.HinhAnh))
-                                        {
-                                            @* Sử dụng Url.Content để mã hóa khoảng trắng và dấu tiếng Việt trong tên file *@
+                        @{
+                            var sanPhamDangBan = Model.Where(p => p.TrangThai);
+                            var sanPhamNgungBan = Model.Where(p => !p.TrangThai);
+                        }
+                        
+                        <!-- Nhóm ĐANG BÁN -->
+                        @if (sanPhamDangBan.Any())
+                        {
+                            <tr class="bg-light">
+                                <td colspan="7" class="ps-4 py-2">
+                                    <h6 class="fw-bold text-success mb-0">
+                                        <i class="fas fa-play-circle me-2"></i>SẢN PHẨM ĐANG BÁN
+                                    </h6>
+                                </td>
+                            </tr>
+                            
+                            @foreach (var item in sanPhamDangBan)
+                            {
+                                <tr class="border-bottom">
+                                    <td class="ps-4 py-3">
+                                        <div class="rounded-3 shadow-sm border overflow-hidden" style="width:60px; height:60px; background-color: #f8f9fa;">
                                             <img src="@Url.Content("~/img/" + item.HinhAnh)" 
                                                  class="img-fluid"
                                                  style="width:100%; height:100%; object-fit:cover;" 
-                                                 onerror="this.src='@Url.Content("~/img/demo.png")'"/>
+                                                 onerror="this.src='@Url.Content("~/img/demo.png")'"
+                                                 alt="@item.TenSanPham"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">@item.TenSanPham</div>
+                                        <small class="text-muted text-truncate d-block" style="max-width: 200px;" title="@item.MoTa">
+                                            @item.MoTa
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="text-danger fw-bold">@item.Gia.ToString("N0")<small>đ</small></span>
+                                    </td>
+                                    <td>
+                                        @if (item.SoLuongTon > 0)
+                                        {
+                                            <span class="badge bg-success rounded-pill px-2 py-1">
+                                                <i class="fas fa-box me-1"></i>@item.SoLuongTon
+                                            </span>
                                         }
                                         else
                                         {
-                                            <img src="~/img/demo.png" 
-                                                 class="img-fluid"
-                                                 style="width:100%; height:100%; object-fit:cover;"/>
+                                            <span class="badge bg-danger rounded-pill px-2 py-1">
+                                                <i class="fas fa-exclamation-circle me-1"></i>Hết
+                                            </span>
                                         }
-                                    </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success rounded-pill px-3 py-1">
+                                            <i class="fas fa-check me-1"></i>Đang bán
+                                        </span>
+                                        <form asp-action="Deactivate" method="post" class="mt-1">
+                                            <input type="hidden" name="id" value="@item.MaSanPham" />
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Ngừng bán">
+                                                <i class="fas fa-pause"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info text-dark rounded-pill px-3 fw-normal">
+                                            @(item.DanhMuc?.TenDanhMuc ?? "Chưa phân loại")
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(item.ChuDe))
+                                        {
+                                            <div class="small text-muted mt-1"><i class="fas fa-tag me-1"></i>#@item.ChuDe</div>
+                                        }
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
+                                            <a asp-action="Edit" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-warning" title="Sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-info" title="Chi tiết">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button class="btn btn-white btn-sm px-3 text-muted" disabled title="Chỉ xóa được khi ngừng bán">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                        <!-- Nhóm NGỪNG BÁN -->
+                        @if (sanPhamNgungBan.Any())
+                        {
+                            <tr class="bg-light">
+                                <td colspan="7" class="ps-4 py-2">
+                                    <h6 class="fw-bold text-secondary mb-0">
+                                        <i class="fas fa-pause-circle me-2"></i>SẢN PHẨM NGỪNG BÁN
+                                    </h6>
                                 </td>
-                                <td>
-                                    <div class="fw-bold text-dark">@item.TenSanPham</div>
-                                    <small class="text-muted text-truncate d-block" style="max-width: 250px;" title="@item.MoTa">
-                                        @item.MoTa
-                                    </small>
-                                </td>
-                                <td>
-                                    <span class="text-danger fw-bold">@item.Gia.ToString("N0") <text>đ</text></span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info text-dark rounded-pill px-3 fw-normal">
-                                        @(item.DanhMuc?.TenDanhMuc ?? "Chưa phân loại")
-                                    </span>
-                                    <div class="small text-muted mt-1 italic"><i class="fas fa-tag me-1 small"></i>#@item.ChuDe</div>
-                                </td>
-                                <td class="text-center pe-4">
-                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
-                                        <a asp-action="Edit" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-warning" title="Sửa">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-action="Details" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-info" title="Chi tiết">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 text-danger" title="Xóa">
-                                            <i class="fas fa-trash-alt"></i>
+                            </tr>
+                            
+                            @foreach (var item in sanPhamNgungBan)
+                            {
+                                <tr class="border-bottom">
+                                    <td class="ps-4 py-3">
+                                        <div class="rounded-3 shadow-sm border overflow-hidden" style="width:60px; height:60px; background-color: #f8f9fa;">
+                                            <img src="@Url.Content("~/img/" + item.HinhAnh)" 
+                                                 class="img-fluid"
+                                                 style="width:100%; height:100%; object-fit:cover;" 
+                                                 onerror="this.src='@Url.Content("~/img/demo.png")'"
+                                                 alt="@item.TenSanPham"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">@item.TenSanPham</div>
+                                        <small class="text-muted text-truncate d-block" style="max-width: 200px;" title="@item.MoTa">
+                                            @item.MoTa
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="text-danger fw-bold">@item.Gia.ToString("N0")<small>đ</small></span>
+                                    </td>
+                                    <td>
+                                        @if (item.SoLuongTon > 0)
+                                        {
+                                            <span class="badge bg-success rounded-pill px-2 py-1">
+                                                <i class="fas fa-box me-1"></i>@item.SoLuongTon
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger rounded-pill px-2 py-1">
+                                                <i class="fas fa-exclamation-circle me-1"></i>Hết
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary rounded-pill px-3 py-1">
+                                            <i class="fas fa-pause me-1"></i>Ngừng bán
+                                        </span>
+                                        <div class="mt-1">
+                                            <form asp-action="Activate" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@item.MaSanPham" />
+                                                <button type="submit" class="btn btn-sm btn-outline-success me-1" title="Kích hoạt lại">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info text-dark rounded-pill px-3 fw-normal">
+                                            @(item.DanhMuc?.TenDanhMuc ?? "Chưa phân loại")
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(item.ChuDe))
+                                        {
+                                            <div class="small text-muted mt-1"><i class="fas fa-tag me-1"></i>#@item.ChuDe</div>
+                                        }
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
+                                            <a asp-action="Edit" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-warning" title="Sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-info" title="Chi tiết">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 text-danger" title="Xóa vĩnh viễn">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                        <!-- Thông báo nếu không có sản phẩm -->
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-box-open fa-3x mb-3"></i>
+                                        <h5>Không có sản phẩm nào</h5>
+                                        <p>Hãy tạo sản phẩm mới để bắt đầu</p>
+                                        <a asp-action="Create" class="btn btn-success mt-2">
+                                            <i class="fas fa-plus-circle me-2"></i>Tạo sản phẩm đầu tiên
                                         </a>
                                     </div>
                                 </td>
@@ -84,9 +263,16 @@
             </div>
         </div>
 
-        @* Footer: Hiển thị tổng số lượng *@
-        <div class="card-footer bg-white py-3 border-top text-muted small">
-            Hiển thị <strong>@Model.Count()</strong> sản phẩm trong menu.
+        <!-- Footer -->
+        <div class="card-footer bg-white py-3 border-top text-muted small d-flex justify-content-between align-items-center">
+            <div>
+                Hiển thị <strong>@Model.Count()</strong> sản phẩm
+            </div>
+            <div class="text-end">
+                <span class="badge bg-light text-dark border">
+                    <i class="fas fa-boxes me-1"></i>Tổng tồn kho: <strong>@Model.Sum(p => p.SoLuongTon).ToString("N0")</strong>
+                </span>
+            </div>
         </div>
     </div>
 </div>
@@ -97,5 +283,17 @@
         setTimeout(function () {
             $('.alert').fadeOut('slow');
         }, 3000);
+        
+        // Xác nhận trước khi xóa
+        document.addEventListener('DOMContentLoaded', function() {
+            var deleteButtons = document.querySelectorAll('a[href*="Delete"]');
+            deleteButtons.forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    if (!confirm('Bạn có chắc chắn muốn xóa VĨNH VIỄN sản phẩm này?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
     </script>
 }

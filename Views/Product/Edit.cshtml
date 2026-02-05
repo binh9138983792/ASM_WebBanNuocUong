@@ -4,49 +4,112 @@
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
             <div class="card border-0 shadow-lg rounded-4">
                 <div class="card-body p-5">
                     <h3 class="fw-bold mb-4 text-center text-primary">Cập Nhật Sản Phẩm</h3>
                     
-                    <form asp-action="Edit">
+                    <form asp-action="Edit" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
                         
                         <input type="hidden" asp-for="MaSanPham" /> 
+                        <input type="hidden" asp-for="NgayTao" />
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label asp-for="TenSanPham" class="form-label fw-bold small">Tên món nước</label>
-                                <input asp-for="TenSanPham" class="form-control rounded-3 shadow-sm" />
+                                <label asp-for="TenSanPham" class="form-label fw-bold small">Tên món nước *</label>
+                                <input asp-for="TenSanPham" class="form-control rounded-3 shadow-sm" required />
                                 <span asp-validation-for="TenSanPham" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6">
-                                <label asp-for="Gia" class="form-label fw-bold small">Giá bán (VNĐ)</label>
-                                <input asp-for="Gia" type="number" class="form-control rounded-3 shadow-sm" />
+                                <label asp-for="Gia" class="form-label fw-bold small">Giá bán *</label>
+                                <div class="input-group">
+                                    <input asp-for="Gia" type="number" step="1000" min="0" class="form-control rounded-3 shadow-sm" required />
+                                    <span class="input-group-text rounded-3">VNĐ</span>
+                                </div>
                                 <span asp-validation-for="Gia" class="text-danger small"></span>
                             </div>
+                            
+                            <!-- Upload ảnh mới -->
                             <div class="col-md-12">
-                                <label asp-for="HinhAnh" class="form-label fw-bold small">Link hình ảnh</label>
-                                <input asp-for="HinhAnh" class="form-control rounded-3 shadow-sm" />
-                                <span asp-validation-for="HinhAnh" class="text-danger small"></span>
+                                <label class="form-label fw-bold small">Hình ảnh sản phẩm</label>
+                                
+                                <!-- Hiển thị ảnh hiện tại -->
+                                @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                                {
+                                    <div class="mb-3 text-center">
+                                        <div class="border rounded-3 p-3 d-inline-block">
+                                            <img src="@Url.Content("~/img/" + Model.HinhAnh)" 
+                                                 class="img-fluid rounded shadow-sm mb-2" 
+                                                 style="max-height: 150px;"
+                                                 onerror="this.src='@Url.Content("~/img/demo.png")'"
+                                                 alt="Ảnh hiện tại" />
+                                            <div class="form-text">
+                                                <i class="fas fa-image me-1"></i>Ảnh hiện tại
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                
+                                <!-- Upload ảnh mới -->
+                                <div class="input-group">
+                                    <input type="file" name="HinhAnhFile" class="form-control rounded-3 shadow-sm" accept=".jpg,.jpeg,.png,.gif" />
+                                </div>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>Vui lòng chọn ảnh.
+                                </div>
                             </div>
+                            
                             <div class="col-md-6">
-                                <label asp-for="MaDanhMuc" class="form-label fw-bold small">Danh mục</label>
-                                <select asp-for="MaDanhMuc" class="form-select rounded-3 shadow-sm" asp-items="ViewBag.MaDanhMuc"></select>
+                                <label asp-for="MaDanhMuc" class="form-label fw-bold small">Danh mục *</label>
+                                <select asp-for="MaDanhMuc" class="form-select rounded-3 shadow-sm" asp-items="ViewBag.MaDanhMuc" required>
+                                    <option value="">-- Chọn danh mục --</option>
+                                </select>
+                                <span asp-validation-for="MaDanhMuc" class="text-danger small"></span>
                             </div>
+                            
                             <div class="col-md-6">
-                                <label asp-for="ChuDe" class="form-label fw-bold small">Chủ đề (Tag)</label>
-                                <input asp-for="ChuDe" class="form-control rounded-3 shadow-sm" />
+                                <label asp-for="SoLuongTon" class="form-label fw-bold small">Số lượng tồn kho *</label>
+                                <input asp-for="SoLuongTon" type="number" min="0" class="form-control rounded-3 shadow-sm" required />
+                                <span asp-validation-for="SoLuongTon" class="text-danger small"></span>
                             </div>
+                            
                             <div class="col-md-12">
                                 <label asp-for="MoTa" class="form-label fw-bold small">Mô tả chi tiết</label>
                                 <textarea asp-for="MoTa" class="form-control rounded-3 shadow-sm" rows="3"></textarea>
                                 <span asp-validation-for="MoTa" class="text-danger small"></span>
                             </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="TrangThai" class="form-label fw-bold small">Trạng thái</label>
+                                <select asp-for="TrangThai" class="form-select rounded-3 shadow-sm">
+                                    <option value="true">Đang bán</option>
+                                    <option value="false">Ngừng bán</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="ChuDe" class="form-label fw-bold small">Chủ đề</label>
+                                <input asp-for="ChuDe" class="form-control rounded-3 shadow-sm" placeholder="Không bắt buộc" />
+                                <span asp-validation-for="ChuDe" class="text-danger small"></span>
+                            </div>
                         </div>
 
                         <div class="mt-4 pt-3 border-top d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill">Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow">Lưu thay đổi</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow">
+                                <i class="fas fa-save me-2"></i>Lưu thay đổi
+                            </button>
                         </div>
                     </form>
                 </div>

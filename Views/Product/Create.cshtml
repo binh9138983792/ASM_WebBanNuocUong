@@ -8,7 +8,7 @@
                 <div class="card-body p-5">
                     <h3 class="fw-bold mb-4 text-center text-success">Thêm Món Nước Mới</h3>
                     
-                    <form asp-action="Create">
+                    <form asp-action="Create" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
                         
                         <div class="row g-3">
@@ -22,18 +22,49 @@
                                 <input asp-for="Gia" type="number" class="form-control rounded-3 shadow-sm" placeholder="VD: 45000" />
                                 <span asp-validation-for="Gia" class="text-danger small"></span>
                             </div>
+                            
+                            <!-- Upload ảnh -->
                             <div class="col-md-12">
-                                <label asp-for="HinhAnh" class="form-label fw-bold small">Đường dẫn ảnh (URL)</label>
-                                <input asp-for="HinhAnh" class="form-control rounded-3 shadow-sm" />
-                                <span asp-validation-for="HinhAnh" class="text-danger small"></span>
+                                <label class="form-label fw-bold small">Hình ảnh sản phẩm</label>
+                                <input type="file" name="HinhAnhFile" class="form-control rounded-3 shadow-sm" accept=".jpg,.jpeg,.png,.gif" />
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>Chọn ảnh từ máy tính (JPG, PNG, GIF). Ảnh sẽ được lưu vào thư mục img.
+                                </div>
                             </div>
+                            
+                            <!-- Số lượng tồn -->
+                            <div class="col-md-6">
+                                <label asp-for="SoLuongTon" class="form-label fw-bold small">Số lượng tồn kho</label>
+                                <input asp-for="SoLuongTon" type="number" min="0" class="form-control rounded-3 shadow-sm" placeholder="VD: 100" />
+                                <span asp-validation-for="SoLuongTon" class="text-danger small"></span>
+                            </div>
+                            
                             <div class="col-md-6">
                                 <label asp-for="MaDanhMuc" class="form-label fw-bold small">Phân loại danh mục</label>
-                                <select asp-for="MaDanhMuc" class="form-select rounded-3 shadow-sm" asp-items="ViewBag.MaDanhMuc"></select>
+                                <select asp-for="MaDanhMuc" class="form-select rounded-3 shadow-sm" asp-items="ViewBag.MaDanhMuc">
+                                    <option value="">-- Chọn danh mục --</option>
+                                </select>
+                                <span asp-validation-for="MaDanhMuc" class="text-danger small"></span>
                             </div>
+                            
                             <div class="col-md-6">
-                                <label asp-for="ChuDe" class="form-label fw-bold small">Gắn nhãn (Tag)</label>
+                                <label asp-for="ChuDe" class="form-label fw-bold small">Chủ đề (Tag)</label>
                                 <input asp-for="ChuDe" class="form-control rounded-3 shadow-sm" placeholder="VD: Best-seller" />
+                                <span asp-validation-for="ChuDe" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="TrangThai" class="form-label fw-bold small">Trạng thái</label>
+                                <select asp-for="TrangThai" class="form-select rounded-3 shadow-sm">
+                                    <option value="true">Đang bán</option>
+                                    <option value="false">Ngừng bán</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label asp-for="MoTa" class="form-label fw-bold small">Mô tả sản phẩm</label>
+                                <textarea asp-for="MoTa" class="form-control rounded-3 shadow-sm" rows="3" placeholder="Mô tả chi tiết về sản phẩm..."></textarea>
+                                <span asp-validation-for="MoTa" class="text-danger small"></span>
                             </div>
                         </div>
 
