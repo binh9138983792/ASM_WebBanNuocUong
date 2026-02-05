@@ -1,13 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ASM_WebBanNuocUong</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - DrinkStore</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ASM_WebBanNuocUong.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <style>
     /* 1. Tông màu chủ đạo */
@@ -19,29 +22,37 @@
     }
 
     body {
-        background-color: var(--beige); /* Nền toàn trang màu be */
+        background-color: var(--beige); 
         color: var(--brown-dark);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
     }
+
+    /* Đảm bảo footer luôn ở dưới cùng */
+    .container { flex: 1; }
 
     /* 2. Hiệu ứng Hover cho nút bấm */
     .btn {
-        transition: all 0.3s ease; /* Tạo hiệu ứng mượt mà */
+        transition: all 0.3s ease;
         border-radius: 8px;
     }
 
     .btn:hover {
-        transform: translateY(-3px); /* Nổi lên trên */
-        box-shadow: 0 5px 15px rgba(93, 64, 55, 0.3); /* Đổ bóng màu nâu */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);
     }
 
-    /* 3. Tùy chỉnh Navbar (Thanh menu) */
+    /* 3. Tùy chỉnh Navbar */
     .navbar {
         background-color: var(--brown-dark) !important;
+        padding: 0.8rem 1rem;
     }
     
     .nav-link {
         color: var(--white) !important;
         position: relative;
+        font-weight: 500;
     }
 
     .nav-link:after {
@@ -54,84 +65,113 @@
     }
 
     .nav-link:hover:after {
-        width: 100%; /* Gạch chân chạy ngang khi hover */
+        width: 100%;
     }
 
-    /* 4. Hiệu ứng cho Card sản phẩm */
-    .card {
-        border: none;
-        background-color: var(--white);
-        transition: transform 0.4s;
+    /* Màu sắc đặc trưng cho các nút trên menu */
+    .btn-login {
+        border: 1px solid var(--brown-light) !important;
+        color: var(--white) !important;
     }
 
-    .card:hover {
-        transform: scale(1.05); /* Phóng to nhẹ khi rê chuột */
-        border: 1px solid var(--brown-light);
-    }
-
-    /* 5. Nút bấm màu đặc trưng */
-    .btn-primary {
-        background-color: var(--brown-dark);
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background-color: #3E2723; /* Nâu cháy khi hover */
+    .btn-register {
+        background-color: var(--brown-light) !important;
+        color: var(--brown-dark) !important;
+        font-weight: bold;
     }
 </style>
 <body>
-   <header>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark border-bottom box-shadow mb-3">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DrinkStore Admin</a>
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-coffee"></i> DrinkStore Admin
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-controller="Category" asp-action="Index">Quản lý Loại nước</a>
+                        <a class="nav-link" asp-controller="Category" asp-action="Index">Loại nước</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-controller="Product" asp-action="Index">Quản lý Sản phẩm</a>
+                        <a class="nav-link" asp-controller="Product" asp-action="Index">Sản phẩm</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-controller="Combo" asp-action="Index">Quản lý Combo</a>
+                        <a class="nav-link" asp-controller="Combo" asp-action="Index">Combo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-controller="Order" asp-action="Index">Quản lý Đơn hàng</a>
+                        <a class="nav-link" asp-controller="Order" asp-action="Index">Đơn hàng</a>
                     </li>
-                    <ul class="navbar-nav">
-                     <li class="nav-item">
-    <a class="nav-link text-dark" asp-controller="Order" asp-action="History">Lịch sử mua hàng</a>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Order" asp-action="History">Lịch sử</a>
+                    </li>
+                    <li class="nav-item">
+    <a class="nav-link position-relative" asp-controller="Cart" asp-action="Index">
+        <i class="fas fa-shopping-basket fa-lg"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+            @{
+                
+                var cartJson = HttpContextAccessor.HttpContext.Session.GetString("GioHang");
+                var count = 0;
+                if (!string.IsNullOrEmpty(cartJson)) {
+              
+                    count = 1;
+                }
+            }
+            @(count > 0 ? count.ToString() : "")
+        </span>
+        <span class="ms-1">Giỏ hàng</span>
+    </a>
 </li>
-    <li class="nav-item">
-        <a class="nav-link btn btn-outline-primary mx-1" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link btn btn-primary text-white mx-1" asp-controller="Account" asp-action="Register">Đăng ký</a>
-    </li>
-   
-</ul>
+                </ul>
+
+                @* LOGIC KIỂM TRA ĐĂNG NHẬP *@
+                <ul class="navbar-nav">
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
+                    {
+                        <li class="nav-item d-flex align-items-center">
+                            <span class="nav-link text-white me-3">
+                                <i class="fas fa-user-circle"></i> Chào, <strong>@HttpContextAccessor.HttpContext.Session.GetString("UserName")</strong>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-light btn-sm px-3" asp-controller="Account" asp-action="Logout">
+                                <i class="fas fa-sign-out-alt"></i> Thoát
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-login mx-1 px-3" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-register mx-1 px-3" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
 </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ASM_WebBanNuocUong - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer text-muted bg-white py-3 mt-auto">
+    <div class="container text-center">
+        &copy; 2026 - <strong>DrinkStore Admin</strong> - <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-secondary">Quyền riêng tư</a>
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,54 +1,45 @@
 @model ASM_WebBanNuocUong.Models.SanPham
 
-@{
-    ViewData["Title"] = "Details";
-}
+<div class="container mt-5">
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="row g-0">
+            <div class="col-md-5">
+                <img src="@Model.HinhAnh" class="img-fluid h-100 w-100 object-fit-cover shadow-sm" style="min-height: 400px;">
+            </div>
+            <div class="col-md-7">
+                <div class="card-body p-5">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb small text-uppercase fw-bold">
+                            <li class="breadcrumb-item"><a href="/Product" class="text-decoration-none text-muted">Sản phẩm</a></li>
+                            <li class="breadcrumb-item active text-primary">Chi tiết</li>
+                        </ol>
+                    </nav>
+                    
+                    <h2 class="display-5 fw-bold text-dark">@Model.TenSanPham</h2>
+                    <p class="text-muted border-start border-4 border-primary ps-3 mb-4">@Model.MoTa</p>
+                    
+                    <div class="mb-4">
+                        <span class="fs-1 fw-bold text-danger">@Model.Gia.ToString("N0") đ</span>
+                        <span class="badge bg-light text-dark border ms-3 px-3 py-2 rounded-pill">Loại: @Model.DanhMuc?.TenDanhMuc</span>
+                    </div>
 
-<h1>Details</h1>
+                    <div class="row bg-light rounded-4 p-3 mb-4 g-2">
+                        <div class="col-6">
+                            <small class="text-muted d-block">Mã sản phẩm</small>
+                            <span class="fw-bold">PROD-@Model.MaSanPham.ToString().Substring(0,5)</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Gắn thẻ</small>
+                            <span class="fw-bold text-info">#@Model.ChuDe</span>
+                        </div>
+                    </div>
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TenSanPham)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TenSanPham)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HinhAnh)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HinhAnh)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoTa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoTa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChuDe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChuDe)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DanhMuc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DanhMuc.TenDanhMuc)
-        </dd>
-    </dl>
-</div>
-<div>
-<a asp-action="Edit" asp-route-id="@Model?.MaSanPham">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                    <div class="d-flex gap-2 pt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.MaSanPham" class="btn btn-dark btn-lg px-5 rounded-pill shadow-sm">Chỉnh sửa</a>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">Quay lại</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

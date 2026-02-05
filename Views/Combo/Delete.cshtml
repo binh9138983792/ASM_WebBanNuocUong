@@ -1,39 +1,16 @@
 @model ASM_WebBanNuocUong.Models.Combo
-
-@{
-    ViewData["Title"] = "Delete";
-}
-
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Combo</h4>
-    <hr />
-    <dl class="row">
-<dt class = "col-sm-2">
-    @Html.DisplayNameFor(model => model.TenCombo)
-</dt>
-<dd class = "col-sm-10">
-    @Html.DisplayFor(model => model.TenCombo)
-</dd>
-<dt class = "col-sm-2">
-    @Html.DisplayNameFor(model => model.Gia)
-</dt>
-<dd class = "col-sm-10">
-    @Html.DisplayFor(model => model.Gia)
-</dd>
-<dt class = "col-sm-2">
-    @Html.DisplayNameFor(model => model.MoTa)
-</dt>
-<dd class = "col-sm-10">
-    @Html.DisplayFor(model => model.MoTa)
-</dd>
-    </dl>
-    
-    <form asp-action="Delete">
-<input type="hidden" asp-for="MaCombo" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="container mt-5 text-center">
+    <div class="card border-0 shadow-lg rounded-4 border-bottom border-danger border-5 mx-auto" style="max-width: 450px;">
+        <div class="card-body p-5">
+            <div class="text-danger mb-3 display-3"><i class="fas fa-trash-alt"></i></div>
+            <h4 class="fw-bold">Bạn chắc chắn muốn xóa?</h4>
+            <p class="text-muted">Combo <strong>@Model.TenCombo</strong> sẽ bị gỡ bỏ vĩnh viễn.</p>
+            
+            <form asp-action="Delete" class="mt-4">
+                <input type="hidden" asp-for="MaCombo" />
+                <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 shadow mb-2">Xóa ngay bây giờ</button>
+                <a asp-action="Index" class="btn btn-light w-100 rounded-pill text-muted small">Hủy và quay về</a>
+            </form>
+        </div>
+    </div>
 </div>

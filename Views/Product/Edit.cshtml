@@ -1,59 +1,56 @@
 @model ASM_WebBanNuocUong.Models.SanPham
+@{ ViewData["Title"] = "Chỉnh sửa sản phẩm"; }
 
-@{
-    ViewData["Title"] = "Sửa";
-}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4 text-center text-primary">Cập Nhật Sản Phẩm</h3>
+                    
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                        
+                        <input type="hidden" asp-for="MaSanPham" /> 
 
-<h1>Sửa</h1>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="TenSanPham" class="form-label fw-bold small">Tên món nước</label>
+                                <input asp-for="TenSanPham" class="form-control rounded-3 shadow-sm" />
+                                <span asp-validation-for="TenSanPham" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Gia" class="form-label fw-bold small">Giá bán (VNĐ)</label>
+                                <input asp-for="Gia" type="number" class="form-control rounded-3 shadow-sm" />
+                                <span asp-validation-for="Gia" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="HinhAnh" class="form-label fw-bold small">Link hình ảnh</label>
+                                <input asp-for="HinhAnh" class="form-control rounded-3 shadow-sm" />
+                                <span asp-validation-for="HinhAnh" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="MaDanhMuc" class="form-label fw-bold small">Danh mục</label>
+                                <select asp-for="MaDanhMuc" class="form-select rounded-3 shadow-sm" asp-items="ViewBag.MaDanhMuc"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ChuDe" class="form-label fw-bold small">Chủ đề (Tag)</label>
+                                <input asp-for="ChuDe" class="form-control rounded-3 shadow-sm" />
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="MoTa" class="form-label fw-bold small">Mô tả chi tiết</label>
+                                <textarea asp-for="MoTa" class="form-control rounded-3 shadow-sm" rows="3"></textarea>
+                                <span asp-validation-for="MoTa" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-<h4>Sản Phẩm</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="MaSanPham" />
-            <div class="form-group">
-                <label asp-for="TenSanPham" class="control-label"></label>
-                <input asp-for="TenSanPham" class="form-control" />
-                <span asp-validation-for="TenSanPham" class="text-danger"></span>
+                        <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Gia" class="control-label"></label>
-                <input asp-for="Gia" class="form-control" />
-                <span asp-validation-for="Gia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="HinhAnh" class="control-label"></label>
-                <input asp-for="HinhAnh" class="form-control" />
-                <span asp-validation-for="HinhAnh" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoTa" class="control-label"></label>
-                <input asp-for="MoTa" class="form-control" />
-                <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ChuDe" class="control-label"></label>
-                <input asp-for="ChuDe" class="form-control" />
-                <span asp-validation-for="ChuDe" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaDanhMuc" class="control-label"></label>
-                <select asp-for="MaDanhMuc" class="form-control" asp-items="ViewBag.MaDanhMuc"></select>
-                <span asp-validation-for="MaDanhMuc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Lưu" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Quay lại danh sách</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

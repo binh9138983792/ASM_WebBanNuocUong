@@ -1,37 +1,101 @@
 @model IEnumerable<ASM_WebBanNuocUong.Models.SanPham>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-primary">Danh sách Nước uống</h2>
-        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-circle"></i> Thêm món mới</a>
-    </div>
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+}
 
-    <table class="table table-hover table-bordered shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>Hình ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá bán</th>
-                <th>Chủ đề</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model) {
-                <tr>
-                    <td><img src="@item.HinhAnh" style="width:60px; height:60px; object-fit:cover;" class="rounded shadow-sm"/></td>
-                    <td class="fw-bold">@item.TenSanPham</td>
-                    <td class="text-danger fw-bold">@item.Gia.ToString("N0") VNĐ</td>
-                    <td><span class="badge bg-info text-dark">@item.ChuDe</span></td>
-                    <td>
-                        <div class="btn-group">
-                            <a asp-action="Edit" asp-route-id="@item.MaSanPham" class="btn btn-sm btn-warning">Sửa</a>
-                            <a asp-action="Details" asp-route-id="@item.MaSanPham" class="btn btn-sm btn-info">Xem</a>
-                            <a asp-action="Delete" asp-route-id="@item.MaSanPham" class="btn btn-sm btn-danger">Xóa</a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="container mt-5">
+    <div class="card border-0 shadow-sm rounded-4">
+        @* Header: Chứa tiêu đề và nút thêm mới *@
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+            <h4 class="fw-bold m-0 text-dark">
+                <i class="fas fa-coffee me-2 text-primary"></i>Quản Lý Menu Nước Uống
+            </h4>
+            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="fas fa-plus-circle me-1"></i> Thêm món mới
+            </a>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4" style="width: 15%">Hình ảnh</th>
+                            <th style="width: 30%">Tên sản phẩm</th>
+                            <th style="width: 15%">Giá bán</th>
+                            <th style="width: 20%">Danh mục / Chủ đề</th>
+                            <th class="text-center" style="width: 20%">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model) {
+                            <tr>
+                                <td class="ps-4 py-3">
+                                    <div class="rounded-3 shadow-sm border overflow-hidden" style="width:70px; height:70px; background-color: #f8f9fa;">
+                                        @if (!string.IsNullOrEmpty(item.HinhAnh))
+                                        {
+                                            @* Sử dụng Url.Content để mã hóa khoảng trắng và dấu tiếng Việt trong tên file *@
+                                            <img src="@Url.Content("~/img/" + item.HinhAnh)" 
+                                                 class="img-fluid"
+                                                 style="width:100%; height:100%; object-fit:cover;" 
+                                                 onerror="this.src='@Url.Content("~/img/demo.png")'"/>
+                                        }
+                                        else
+                                        {
+                                            <img src="~/img/demo.png" 
+                                                 class="img-fluid"
+                                                 style="width:100%; height:100%; object-fit:cover;"/>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.TenSanPham</div>
+                                    <small class="text-muted text-truncate d-block" style="max-width: 250px;" title="@item.MoTa">
+                                        @item.MoTa
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="text-danger fw-bold">@item.Gia.ToString("N0") <text>đ</text></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark rounded-pill px-3 fw-normal">
+                                        @(item.DanhMuc?.TenDanhMuc ?? "Chưa phân loại")
+                                    </span>
+                                    <div class="small text-muted mt-1 italic"><i class="fas fa-tag me-1 small"></i>#@item.ChuDe</div>
+                                </td>
+                                <td class="text-center pe-4">
+                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
+                                        <a asp-action="Edit" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-warning" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 border-end text-info" title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.MaSanPham" class="btn btn-white btn-sm px-3 text-danger" title="Xóa">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* Footer: Hiển thị tổng số lượng *@
+        <div class="card-footer bg-white py-3 border-top text-muted small">
+            Hiển thị <strong>@Model.Count()</strong> sản phẩm trong menu.
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Tự động ẩn các thông báo nếu có (TempData) sau 3 giây
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000);
+    </script>
+}

@@ -1,72 +1,71 @@
 ﻿@model IEnumerable<ASM_WebBanNuocUong.Models.SanPham>
 
 @{
-    ViewData["Title"] = "Trang Chủ - Drink Store";
+    ViewData["Title"] = "Trang Chủ";
 }
 
-<div class="p-5 mb-4 bg-light rounded-3 shadow-sm" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1544145945-f904253d0c7b?auto=format&fit=crop&w=1350&q=80'); background-size: cover; color: white;">
-    <div class="container-fluid py-5 text-center">
-        <h1 class="display-4 fw-bold">Chào mừng tới Drink Store</h1>
-        <p class="fs-4">Thưởng thức những món nước tuyệt vời nhất với ưu đãi hấp dẫn mỗi ngày.</p>
-        <a href="#menu" class="btn btn-warning btn-lg px-4">Xem Menu ngay</a>
+<div class="p-5 mb-5 rounded-4 shadow-lg text-center text-white" 
+     style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+            url('https://images.unsplash.com/photo-1544145945-f904253d0c7b?auto=format&fit=crop&w=1350&q=80'); 
+            background-size: cover; background-position: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center;">
+    
+    <h1 class="display-2 fw-bold mb-3 animate__animated animate__fadeInDown">Drink Store</h1>
+    <p class="fs-4 mb-4 opacity-75 animate__animated animate__fadeInUp">Hương vị thuần khiết - Trải nghiệm tinh tế trong từng giọt nước</p>
+    
+    <div class="d-flex gap-3 justify-content-center animate__animated animate__zoomIn">
+        <a href="#menu" class="btn btn-light btn-lg rounded-pill fw-bold px-4 shadow">
+            <i class="fas fa-coffee me-2"></i>Khám phá Menu ngay
+        </a>
     </div>
 </div>
 
-<div class="container" id="menu">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2 class="border-bottom pb-2 text-primary">Danh sách món nước</h2>
-        </div>
-        <div class="col-md-4">
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Tìm kiếm món nước..." aria-label="Search">
-                <button class="btn btn-outline-primary" type="button">Tìm</button>
-            </form>
-        </div>
+<div class="container pb-5" id="menu">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="fas fa-leaf text-success me-2"></i>Danh sách món nước</h2>
+        <div class="text-muted">Giao hàng nhanh trong 15 phút</div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
         @if (Model != null && Model.Any())
         {
-            @foreach (var item in Model)
+            foreach (var sp in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 transition-hover">
-                        <div class="position-relative">
-                            <img src="@item.HinhAnh" class="card-img-top" alt="@item.TenSanPham" style="height: 200px; object-fit: cover;">
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger">@item.ChuDe</span>
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                        <img src="/img/@(string.IsNullOrEmpty(sp.HinhAnh) ? "matcha đá xay.jpg" : sp.HinhAnh)" 
+                             class="card-img-top" style="height: 220px; object-fit: cover;"
+                             onerror="this.src='/img/matcha đá xay.jpg'">
+                        <div class="card-body text-center">
+                            <h5 class="fw-bold text-dark">@sp.TenSanPham</h5>
+                            <p class="text-danger fw-bold fs-5">@sp.Gia.ToString("N0") VNĐ</p>
+                            <a asp-controller="Cart" asp-action="AddProductToCart" asp-route-id="@sp.MaSanPham" 
+                               class="btn btn-dark w-100 rounded-pill py-2 shadow-sm">
+                                <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                            </a>
                         </div>
-                        
-                      <div class="card h-100 shadow-sm">
-    <img src="@item.HinhAnh" class="card-img-top" style="height: 200px; object-fit: cover;">
-    <div class="card-body text-center" style="background-color: #FFF9F4;"> <h5 class="card-title fw-bold" style="color: var(--brown-dark);">@item.TenSanPham</h5>
-        <p class="text-danger fw-bold">@item.Gia.ToString("N0") VNĐ</p>
-        <div class="d-grid gap-2">
-            <a href="#" class="btn btn-primary">Thêm vào giỏ</a>
-            <a href="#" class="btn btn-outline-secondary">Chi tiết</a>
-        </div>
-    </div>
-</div>
                     </div>
                 </div>
             }
         }
         else
         {
-            @for (int i = 1; i <= 4; i++)
+         
+            var demoItems = new[] {
+                new { Name = "Cà phê muối", Price = 35000, Img = "cà phê muối.jpg" },
+                new { Name = "Matcha đá xay", Price = 45000, Img = "matcha đá xay.jpg" },
+                new { Name = "Trà sữa trân châu", Price = 35000, Img = "trà sữa trân châu.jpg" },
+                new { Name = "Nước ép cam", Price = 40000, Img = "nước ép cam.jpg" }
+            };
+
+            foreach (var x in demoItems)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Demo">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 opacity-75">
+                        <img src="/img/@x.Img" class="card-img-top" style="height: 220px; object-fit: cover;">
                         <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Sản phẩm mẫu @i</h5>
-                            <p class="card-text text-muted">Mô tả ngắn về món nước thơm ngon này...</p>
-                            <h5 class="text-danger">50,000 VNĐ</h5>
-                        </div>
-                        <div class="card-footer bg-transparent border-0 pb-3">
-                            <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary rounded-pill">Thêm vào giỏ</button>
-                            </div>
+                            <h5 class="fw-bold">@x.Name</h5>
+                            <p class="text-danger fw-bold">@x.Price.ToString("N0") VNĐ</p>
+                            <button class="btn btn-secondary w-100 rounded-pill" disabled>Sản phẩm mẫu</button>
                         </div>
                     </div>
                 </div>
@@ -76,13 +75,15 @@
 </div>
 
 <style>
-    .transition-hover:hover {
-        transform: translateY(-10px);
-        transition: 0.3s;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+    /* Hiệu ứng khi di chuột vào thẻ sản phẩm */
+    .card-hover {
+        transition: transform 0.3s ease, shadow 0.3s ease;
     }
-    .card-img-top {
-        border-top-left-radius: calc(0.375rem - 1px);
-        border-top-right-radius: calc(0.375rem - 1px);
+    .card-hover:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+    }
+    html {
+        scroll-behavior: smooth; 
     }
 </style>
